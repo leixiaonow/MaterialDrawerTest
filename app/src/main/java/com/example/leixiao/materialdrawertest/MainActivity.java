@@ -110,14 +110,16 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else {
                     if (selectedPositions.contains(position)){
-                        selectedPositions.remove((Object)position);
                         notesData.get(position).setSelected(false);
+                        mAdapter.notifyDataSetChanged();
+                        selectedPositions.remove((Object)position);
                         if (selectedPositions.size()==0){
                             actionMode.finish();
                             isActionMode=false;
                         }
+
                         actionMode.setTitle(String.valueOf(selectedPositions.size()));
-                        mAdapter.notifyDataSetChanged();
+
 
                     }
                     else {

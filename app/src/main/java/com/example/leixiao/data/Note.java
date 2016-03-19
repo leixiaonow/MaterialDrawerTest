@@ -15,7 +15,7 @@ public class Note implements Serializable {
     private String content;
     private Date createdAt;
     private Date updatedAt;
-    private Boolean selected;
+    private Boolean selected=false;
 
     public Boolean getSelected() {
         return selected;

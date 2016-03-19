@@ -60,8 +60,11 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolder> 
         holder.getNoteContentText().setText(note.getContent().length() > 15 ? note.getContent().substring(0, 5).concat("...") : note.getContent());
         holder.getNoteIdText().setText(String.valueOf(note.getId()));
         holder.getNoteDateText().setText(DATETIME_FORMAT.format(note.getUpdatedAt()));
-        if (position==3) {
+        if (note.getSelected()) {
             holder.getCardView().setCardBackgroundColor(Color.GREEN);
+        }
+        else {
+            holder.getCardView().setCardBackgroundColor(Color.WHITE);
         }
 
         // 在加载holder时，如果设置了回调，则为每个itemView设置点击事件，和长按事件
