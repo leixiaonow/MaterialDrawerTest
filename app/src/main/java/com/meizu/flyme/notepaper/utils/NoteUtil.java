@@ -9,6 +9,7 @@ import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
 
+import com.example.leixiao.materialdrawertest.R;
 import com.meizu.flyme.notepaper.Config;
 import com.meizu.flyme.notepaper.database.NotePaper;
 
