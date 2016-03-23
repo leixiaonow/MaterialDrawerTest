@@ -34,7 +34,7 @@ public class HanziToPinyin {
         }
 
         public Token() {
-
+            super();
         }
     }
 
