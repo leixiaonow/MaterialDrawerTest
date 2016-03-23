@@ -19,6 +19,7 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -224,101 +225,7 @@ public class NoteUtil {
     }
 
     //严重问题，注释
-    public static boolean CopyFile(String fromFile, String toFile) {
-      /*  Throwable th;
-        boolean z = false;
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            byte[] bt = new byte[AccessibilityNodeInfoCompat.ACTION_NEXT_HTML_ELEMENT];
-            InputStream is2 = new FileInputStream(fromFile);
-            try {
-                OutputStream os2 = new FileOutputStream(toFile);
-                while (true) {
-                    try {
-                        int nread = is2.read(bt);
-                        if (nread <= 0) {
-                            break;
-                        }
-                        os2.write(bt, NOTE_TYPE_TEXT, nread);
-                    } catch (Exception e) {
-                        os = os2;
-                        is = is2;
-                    } catch (Throwable th2) {
-                        th = th2;
-                        os = os2;
-                        is = is2;
-                    }
-                }
-                os2.flush();
-                z = true;
-                if (is2 != null) {
-                    try {
-                        is2.close();
-                    } catch (IOException e2) {
-                    }
-                }
-                if (os2 != null) {
-                    try {
-                        os2.close();
-                    } catch (IOException e3) {
-                    }
-                }
-                os = os2;
-                is = is2;
-            } catch (Exception e4) {
-                is = is2;
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException e5) {
-                    }
-                }
-                if (os != null) {
-                    try {
-                        os.close();
-                    } catch (IOException e6) {
-                    }
-                }
-                return z;
-            } catch (Throwable th3) {
-                th = th3;
-                is = is2;
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException e7) {
-                    }
-                }
-                if (os != null) {
-                    try {
-                        os.close();
-                    } catch (IOException e8) {
-                    }
-                }
-                throw th;
-            }
-        } catch (Exception e9) {
-            if (is != null) {
-                is.close();
-            }
-            if (os != null) {
-                os.close();
-            }
-            return z;
-        } catch (Throwable th4) {
-            th = th4;
-            if (is != null) {
-                is.close();
-            }
-            if (os != null) {
-                os.close();
-            }
-            throw th;
-        }
-        return z;*/
-        return false;
-    }
+
 
     public static String getNameWithoutExt(String fileName) {
         if (fileName == null) {
@@ -406,7 +313,7 @@ public class NoteUtil {
         if (time < MILLSECONDS_OF_HOUR) {
             return BuildConfig.VERSION_NAME;
         }
-        GregorianCalendar today = new GregorianCalendar(now.get(1), now.get(2), now.get(5));
+        GregorianCalendar today = new GregorianCalendar(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE));
         long in24h = time - today.getTimeInMillis();
         if (in24h < 0 || in24h >= MILLSECONDS_OF_DAY) {
             long in48h = (time - today.getTimeInMillis()) + MILLSECONDS_OF_DAY;
@@ -415,7 +322,7 @@ public class NoteUtil {
             }
             GregorianCalendar target = new GregorianCalendar();
             target.setTimeInMillis(time);
-            if (now.get(1) == target.get(1)) {
+            if (now.get(Calendar.YEAR) == target.get(Calendar.YEAR)) {
                 return DateUtils.formatDateTime(context, time, 24);
             }
             return DateFormat.getDateFormat(context).format(Long.valueOf(time));
@@ -447,7 +354,7 @@ public class NoteUtil {
         if (time < MILLSECONDS_OF_HOUR) {
             return true;
         }
-        GregorianCalendar today = new GregorianCalendar(now.get(1), now.get(2), now.get(5));
+        GregorianCalendar today = new GregorianCalendar(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE));
         if (time <= today.getTimeInMillis() - (((long) days) * MILLSECONDS_OF_DAY) || time > today.getTimeInMillis() + MILLSECONDS_OF_DAY) {
             return true;
         }

@@ -28,7 +28,6 @@ import com.meizu.flyme.notepaper.database.NotePaper.NoteFiles;
 import com.meizu.flyme.notepaper.database.NotePaper.Notes;
 import com.meizu.flyme.notepaper.utils.Constants;
 import com.meizu.flyme.notepaper.utils.HanziToPinyin;
-import com.meizu.flyme.notepaper.utils.NoteUpgradeUtils;
 import com.meizu.flyme.notepaper.utils.NoteUtil;
 
 import org.json.JSONArray;
@@ -38,7 +37,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -635,8 +633,9 @@ public class NotePaperProvider extends ContentProvider {
                     return ContentUris.withAppendedId(uri, rowId);
                 }
                 throw new SQLException("Failed to insert row into " + uri);
+                //暂时不需要插入老笔记，注释了，也不再依赖NoteUpgradeUtils
             case OLD_NOTES /*21*/:
-                if (initialValues != null) {
+                /*if (initialValues != null) {
                     values = new ContentValues(initialValues);
                 } else {
                     values = new ContentValues();
@@ -648,7 +647,7 @@ public class NotePaperProvider extends ContentProvider {
                     notifyAppWidgetUpdated(getContext());
                     return noteUri;
                 }
-                throw new SQLException("Failed to insert row into " + uri);
+                throw new SQLException("Failed to insert row into " + uri);*/
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -859,8 +858,13 @@ public class NotePaperProvider extends ContentProvider {
         }
     }
 
+    //暂时不用，注释了
+    @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
-        Log.d(TAG, "start ");
+
+        //当不是老笔记的情况,不再需要引用NoteUpgradeUtils
+        return super.bulkInsert(uri, values);
+        /*Log.d(TAG, "start ");
         if (sUriMatcher.match(uri) != OLD_NOTES) {
             return super.bulkInsert(uri, values);
         }
@@ -915,7 +919,7 @@ public class NotePaperProvider extends ContentProvider {
             return numValues;
         }
         getContext().sendBroadcast(new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE", Uri.fromFile(parent)));
-        return numValues;
+        return numValues;*/
     }
 
     public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException {
