@@ -411,7 +411,7 @@ public class NoteUtil {
         if (in24h < 0 || in24h >= MILLSECONDS_OF_DAY) {
             long in48h = (time - today.getTimeInMillis()) + MILLSECONDS_OF_DAY;
             if (in48h >= 0 && in48h < MILLSECONDS_OF_DAY) {
-                return context.getString(R.string.fmt_pre_yesterday) + Token.SEPARATOR + DateFormat.getTimeFormat(context).format(Long.valueOf(time));
+                return context.getString(R.string.fmt_pre_yesterday) + HanziToPinyin.Token.SEPARATOR + DateFormat.getTimeFormat(context).format(Long.valueOf(time));
             }
             GregorianCalendar target = new GregorianCalendar();
             target.setTimeInMillis(time);
