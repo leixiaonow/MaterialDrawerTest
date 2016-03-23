@@ -32,4 +32,9 @@
     <string name="label_created_at">Created at:</string>
     <string name="label_updated_at">Updated at:</string>
     <string name="action_chang_view">视图切换</string>
+
+    <!-- 魅族的 -->
+    <string name="default_tag_life">Daily life</string>
+    <string name="default_tag_temp">Temporary</string>
+    <string name="default_tag_work">Work</string>
 </resources>
