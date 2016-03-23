@@ -2,29 +2,24 @@ package com.meizu.flyme.notepaper.utils;
 
 import android.content.Context;
 import android.os.Environment;
-import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.support.v7.appcompat.BuildConfig;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.format.Time;
-import android.util.Log;
 
 import com.example.leixiao.materialdrawertest.R;
 import com.meizu.flyme.notepaper.Config;
 import com.meizu.flyme.notepaper.database.NotePaper;
 
 import java.io.File;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 
-//md5sum() 和copyfile() 有严重问题，没有实现
+//md5sum() 和copyfile() 有严重问题，没有实现，copyfile已经被删除了，因为没有被使用
+//md5sum() 有关的都被删除了，因为没有使用
 public class NoteUtil {
     public static final int EDIT_TYPE_CAMERA = -4;
     public static final int EDIT_TYPE_FLOAT = -6;
@@ -111,101 +106,7 @@ public class NoteUtil {
     }
 
     //有严重问题，注释了
-    public static String md5sum(String filename) {
-        /*IOException e;
-        Throwable th;
-        InputStream is = null;
-        try {
-            InputStream is2 = new FileInputStream(filename);
-            try {
-                String md5sum = md5sum(is2);
-                if (is2 != null) {
-                    try {
-                        is2.close();
-                    } catch (IOException e2) {
-                    }
-                }
-                is = is2;
-                return md5sum;
-            } catch (IOException e3) {
-                e = e3;
-                is = is2;
-                try {
-                    Log.e(TAG, e.toString());
-                    if (is != null) {
-                        try {
-                            is.close();
-                        } catch (IOException e4) {
-                        }
-                    }
-                    return null;
-                } catch (Throwable th2) {
-                    th = th2;
-                    if (is != null) {
-                        try {
-                            is.close();
-                        } catch (IOException e5) {
-                        }
-                    }
-                    throw th;
-                }
-            } catch (Throwable th3) {
-                th = th3;
-                is = is2;
-                if (is != null) {
-                    is.close();
-                }
-                throw th;
-            }
-        } catch (IOException e6) {
-            e = e6;
-            Log.e(TAG, e.toString());
-            if (is != null) {
-                is.close();
-            }
-            return null;
-        }*/
-        return null;
-    }
 
-    public static String md5sum(InputStream is) {
-        try {
-            byte[] buffer = new byte[AccessibilityNodeInfoCompat.ACTION_NEXT_HTML_ELEMENT];
-            MessageDigest md5 = MessageDigest.getInstance("MD5");
-            while (true) {
-                int numRead = is.read(buffer);
-                if (numRead <= 0) {
-                    return toHexString(md5.digest());
-                }
-                md5.update(buffer, NOTE_TYPE_TEXT, numRead);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
-            return null;
-        }
-    }
-
-    public static String md5sum(byte[] data, int st, int len) {
-        String str = null;
-        if (st >= 0 && st < data.length && len > 0 && st + len <= data.length) {
-            try {
-                MessageDigest md5 = MessageDigest.getInstance("MD5");
-                md5.update(data, st, len);
-                str = toHexString(md5.digest());
-            } catch (NoSuchAlgorithmException e) {
-                Log.e(TAG, e.toString());
-            }
-        }
-        return str;
-    }
-
-    public static String md5sum(byte[] data) {
-        return md5sum(data, NOTE_TYPE_TEXT, data.length);
-    }
-
-    public static String md5sumString(String str) {
-        return md5sum(str.getBytes(Charset.forName(ENCODING)));
-    }
 
     public static String encodeHex(byte[] data) {
         int l = data.length;

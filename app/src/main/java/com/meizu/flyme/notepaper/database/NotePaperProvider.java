@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.UUID;
 
-//copydb()没有实现
+//copydb()没有实现，不插入默认笔记或不用升级，可以不使用
 public class NotePaperProvider extends ContentProvider {
     private static final int ACCOUNTS = 15;
     private static final int ACCOUNT_ID = 16;
@@ -105,6 +105,7 @@ public class NotePaperProvider extends ContentProvider {
             createFilesTable(db);
             createTagTable(db);
             createAccountTable(db);
+            //插入内建的笔记，可以注释掉
             insertBuiltInNoteData(db, "0");
         }
 
@@ -222,7 +223,7 @@ public class NotePaperProvider extends ContentProvider {
                     File imgFile3 = NoteUtil.getFile(uuid, name3);
                     File imgFile4 = NoteUtil.getFile(uuid, name4);
                     File imgFile5 = NoteUtil.getFile(uuid, name5);
-                    Log.d(NotePaperProvider.TAG, "name5: " + name5 + " md5: " + NoteUtil.md5sum(imgFile5.getPath()));
+                //    Log.d(NotePaperProvider.TAG, "name5: " + name5 + " md5: " + NoteUtil.md5sum(imgFile5.getPath()));
                     db.execSQL("insert into notefiles (note_uuid,name,md5,type,mtime," + NoteFiles.DIRTY + ") " + "values (" + "'" + uuid + "'" + "," + "'" + name1 + "'" + "," + "'" + "0f981deb84ea215335173d28223df37b" + "'" + "," + NotePaperProvider.FILE_COLUMN_ID + "," + imgFile1.lastModified() + "," + dirty + ")");
                     db.execSQL("insert into notefiles (note_uuid,name,md5,type,mtime," + NoteFiles.DIRTY + ") " + "values (" + "'" + uuid + "'" + "," + "'" + name2 + "'" + "," + "'" + "60331a4dcf37e878f63dd7365576e525" + "'" + "," + NotePaperProvider.FILE_COLUMN_ID + "," + imgFile2.lastModified() + "," + dirty + ")");
                     db.execSQL("insert into notefiles (note_uuid,name,md5,type,mtime," + NoteFiles.DIRTY + ") " + "values (" + "'" + uuid + "'" + "," + "'" + name3 + "'" + "," + "'" + "cac68e8542e397ac0eace66bb3ab85c3" + "'" + "," + NotePaperProvider.FILE_COLUMN_ID + "," + imgFile3.lastModified() + "," + dirty + ")");
@@ -370,6 +371,7 @@ public class NotePaperProvider extends ContentProvider {
             NotePaperProvider.createTriggers(db);
         }
 
+        //不用升级，可以把内容注释掉，不使用insertBuiltInNoteData（）方法，应为其引用的方法没有实现
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(NotePaperProvider.TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
             db.execSQL("DROP TRIGGER IF EXISTS files_cleanup");
