@@ -157,6 +157,7 @@ public class NoteEditActivity extends RecordActivityBase {
     final int STATE_PAUSE_DELETE = REQUEST_CODE_SHARING;
     final int STATE_PAUSE_INSERT = REQUEST_CODE_EXPORT_TO_TEXT;
     final int STATE_PAUSE_SWITCH_TO_BACK = REQUEST_CODE_LOGIN;
+
     private Button mButtonSave = null;//保存按钮????
     int mChanged = 0;
     //CheckImageView 的监听事件
@@ -180,6 +181,9 @@ public class NoteEditActivity extends RecordActivityBase {
             }
         }
     };
+
+
+
     private int mCount = 0;
     //存储NoteItem的列表，文字，图片，和声音
     private ArrayList<NoteItem> mDataList = new ArrayList();
@@ -300,6 +304,8 @@ public class NoteEditActivity extends RecordActivityBase {
             }
         }
     };
+
+
     //删除文件列表
     private HashSet<String> mDeleteFilesList;
     //拖动列？？？？
@@ -816,6 +822,8 @@ public class NoteEditActivity extends RecordActivityBase {
             }*/
 //        }
 //        registerNFC(this);
+
+        //高级加密，当按home和屏幕熄灭时关闭笔记,根据参数，关闭方式还不同
         if (TagData.FUN_ENCRYPT) {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction("android.intent.action.SCREEN_OFF");
