@@ -34,4 +34,8 @@ dependencies {
 
     compile 'com.bignerdranch.android:recyclerview-multiselect:+'
 
+    compile 'com.google.code.gson:gson:2.2.4'
+    compile files('libs/volley.jar')
+    compile 'com.jakewharton:disklrucache:2.0.2'
+
 }
