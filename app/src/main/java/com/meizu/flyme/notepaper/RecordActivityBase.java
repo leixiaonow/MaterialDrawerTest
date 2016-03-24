@@ -1,16 +1,16 @@
 package com.meizu.flyme.notepaper;
 
-import android.app.Activity;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.meizu.flyme.notepaper.utils.NoteUtil;
 import com.meizu.flyme.notepaper.widget.DragShadowBuilderMz;
 import com.meizu.flyme.notepaper.widget.RecordLinearLayout;
 import com.meizu.flyme.notepaper.widget.RecordLinearLayout.RecordPlayManager;
 
-public class RecordActivityBase extends Activity implements RecordPlayManager {
+public class RecordActivityBase extends AppCompatActivity implements RecordPlayManager {
     public static final int NORMAL = 0;
     public static final int PLAYING = 1;
     public static final int PLAYPAUSE = 2;

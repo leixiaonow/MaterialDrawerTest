@@ -7,15 +7,12 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.widget.Toolbar;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
@@ -23,6 +20,7 @@ import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,9 +40,13 @@ import com.meizu.flyme.notepaper.utils.Constants;
 import com.meizu.flyme.notepaper.utils.HanziToPinyin;
 import com.meizu.flyme.notepaper.utils.NoteUtil;
 import com.meizu.flyme.notepaper.utils.ReflectUtils;
+import com.meizu.flyme.notepaper.widget.CheckImageView;
+import com.meizu.flyme.notepaper.widget.DeleteImageView;
 import com.meizu.flyme.notepaper.widget.DragShadowBuilderMz;
+import com.meizu.flyme.notepaper.widget.EditDragView;
 import com.meizu.flyme.notepaper.widget.EditTextCloud;
 import com.meizu.flyme.notepaper.widget.NoteEditText;
+import com.meizu.flyme.notepaper.widget.RecordLinearLayout;
 import com.meizu.flyme.notepaper.widget.RecordingLayout;
 import com.meizu.flyme.notepaper.widget.RichFrameLayout;
 
@@ -261,6 +263,9 @@ public class NoteEditActivity2 extends RecordActivityBase{
     //电话管理器
     private TelephonyManager telephonyManager;
 
+    private Toolbar edit_toolbar;
+
+
     //Tag信息类
     class TagInfo {
         long id;
@@ -286,6 +291,9 @@ public class NoteEditActivity2 extends RecordActivityBase{
             findViewById(R.id.tag).setVisibility(View.GONE);
         }
 
+        //加载tool_bar
+        edit_toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(edit_toolbar);
         //得到最外层mScrollView
         this.mScrollView = (ScrollView) findViewById(R.id.scroll_view);
 //        还不清楚作用
@@ -303,24 +311,23 @@ public class NoteEditActivity2 extends RecordActivityBase{
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         //设置图片，或录音控件宽度，屏幕宽度-200px
         this.mWidth = dm.widthPixels - 200;
-        //判断是否从浮动窗口打开？？
 
         //关键的地方，初始化界面的各种组件
-        initContentView();
+//        initContentView();
 
         //设置背景颜色为mEditNote.mPaper
-        if (this.mEditNote != null) {
+/*        if (this.mEditNote != null) {
             getWindow().setBackgroundDrawable(new ColorDrawable(NoteUtil.getBackgroundColor(this.mEditNote.mPaper)));
-            }
+            }*/
 
         //设置Actionbar和下弹出式菜单的颜色，现在不关心
 //        setActionBarOverLayColor();
 
         //电话监听什么的？？
-        this.telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        this.telephonyManager.listen(this.phoneStateListener, 32);
+//        this.telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+//        this.telephonyManager.listen(this.phoneStateListener, 32);
         //注册receiver
-        registerReceiver(this.mTimeChangedReceiver, new IntentFilter("android.intent.action.TIME_SET"));
+//        registerReceiver(this.mTimeChangedReceiver, new IntentFilter("android.intent.action.TIME_SET"));
     }
 
 
@@ -438,6 +445,7 @@ public class NoteEditActivity2 extends RecordActivityBase{
 
 
 
+//        初始化titlebar有许多问题
         initTitle();
 
 
@@ -445,7 +453,8 @@ public class NoteEditActivity2 extends RecordActivityBase{
         //初始化完成
         this.mInitOK = true;
         //添加mScrollView的监听，点的时候进入onFocusToEdit();编辑模式？？
-        this.mScrollView.findViewById(R.id.empty).setOnClickListener(new View.OnClickListener() {
+        //先不管监听
+/*        this.mScrollView.findViewById(R.id.empty).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Point pt = new Point();
                 ReflectUtils.getLastTouchPoint(v, pt);
@@ -455,19 +464,20 @@ public class NoteEditActivity2 extends RecordActivityBase{
                     onFocusToEdit();
                 }
             }
-        });
-        //点击进入编辑？？
-        lastTimeView.setOnClickListener(new View.OnClickListener() {
+        });*/
+        //点击进入编辑？？先不管监听
+/*        lastTimeView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 onFocusToEdit();
             }
-        });
+        });*/
 
         View view = this.mScrollView.findViewById(R.id.frame_parent);
         //mType 表示 打开编辑页面的类型？？ 当类型为-4时直接onInsertImage()
         //-3时，直接onRecord();
-        switch (this.mType) {
-            case NoteUtil.EDIT_TYPE_CAMERA /*-4*/:
+        //先不管 插入图片和录音的类型
+/*        switch (this.mType) {
+            case NoteUtil.EDIT_TYPE_CAMERA *//*-4*//*:
                 if (checkSdcardOK() && this.mType == -4) {
                     this.mHandler.postDelayed(new Runnable() {
                         public void run() {
@@ -476,13 +486,13 @@ public class NoteEditActivity2 extends RecordActivityBase{
                     }, 500);
                     break;
                 }
-            case NoteUtil.EDIT_TYPE_RECORD /*-3*/:
+            case NoteUtil.EDIT_TYPE_RECORD *//*-3*//*:
                 if (checkSdcardOK()) {
                     onRecord();
                     break;
                 }
                 break;
-        }
+        }*/
 
         //设置tagName,来自数据库，
         String tagName = getString(R.string.all_tag);//所有笔记分类？？
@@ -532,7 +542,8 @@ public class NoteEditActivity2 extends RecordActivityBase{
                 }
                 getWindow().setSoftInputMode(21);
                 this.mSoftInputShown = true;
-                onFocusToEdit();
+                //进入编辑？？先不管
+            //    onFocusToEdit();
                 break;
             case NoteUtil.EDIT_TYPE_UPDATE /*-5*/:
                 this.mTailView.setText(modifyTime);
@@ -560,10 +571,12 @@ public class NoteEditActivity2 extends RecordActivityBase{
                 this.mTailView.setText(createTime);
                 getWindow().setSoftInputMode(21);
                 this.mSoftInputShown = true;
-                onFocusToEdit();
+                //进入编辑？？先不管
+//                onFocusToEdit();
                 break;
         }
-        setFirstHint();
+//        设置第一个提示，先不管
+//        setFirstHint();
     }
 
 
@@ -584,7 +597,7 @@ public class NoteEditActivity2 extends RecordActivityBase{
         //数量为0
         int size = 0;
         //json数组置为空
-        JSONArray ja = null;
+        JSONArray ja;
         //mNoteData是String类型，如果有数据就加到界面中
         if (this.mEditNote.mNoteData != null) {
             //从mNoteData恢复出json数组
@@ -641,28 +654,28 @@ public class NoteEditActivity2 extends RecordActivityBase{
     public void initTitle() {
         ActionBar actionBar = getActionBar();
         //什么作用
-        actionBar.setDisplayOptions(REQUEST_CODE_PICK);
+//        actionBar.setDisplayOptions(REQUEST_CODE_PICK);
         //什么作用
         ReflectUtils.setStatusBarDarkIcon(this, true);
         //有什么用？？没搞懂用处
 //        ActionBarUtils.setActionModeHeaderHidden(actionBar, true);
         //设置actionbar的布局文件
-        actionBar.setCustomView(getLayoutInflater().inflate(R.layout.edit_title, null), new ActionBar.LayoutParams(-1, -1));
+//        actionBar.setCustomView(getLayoutInflater().inflate(R.layout.edit_title, null), new ActionBar.LayoutParams(-1, -1));
 
         //什么作用
-        actionBar.setDisplayShowCustomEnabled(true);
+//        actionBar.setDisplayShowCustomEnabled(true);
 //        actionBar.setDisplayOptions(CHANGE_CONTENT);
         //得到刚刚加载的View
-        ViewGroup custom = (ViewGroup) actionBar.getCustomView();
+//        ViewGroup custom = (ViewGroup) actionBar.getCustomView();
         //得到刚刚加载的View的toolbar
-        this.mTitleToolBar = (LinearLayout) custom.findViewById(R.id.toolBar);
+//        this.mTitleToolBar = (LinearLayout) custom.findViewById(R.id.toolBar);
 
         //设置mTitleView
-        this.mTitleView = (EditTextCloud) custom.findViewById(R.id.title);
+//        this.mTitleView = (EditTextCloud) custom.findViewById(R.id.title);
         //为mTitleView设置标题
-        this.mTitleView.setText(this.mEditNote.mTitle);
-        //为mTitleView添加监听
-        this.mTitleView.addTextChangedListener(new TextWatcher() {
+//        this.mTitleView.setText(this.mEditNote.mTitle);
+        //为mTitleView添加监听，文字改变监听，暂时不需要
+/*        this.mTitleView.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
@@ -672,16 +685,104 @@ public class NoteEditActivity2 extends RecordActivityBase{
             public void afterTextChanged(Editable s) {
                 setTitleChanged();
             }
-        });
-        this.mTitleView.clearFocus();
-        this.mTitleView.setOnKeyPreImeListener(getKeyPreImeListener());
+        });*/
+//        this.mTitleView.clearFocus();
+        //先不管监听
+/*        this.mTitleView.setOnKeyPreImeListener(getKeyPreImeListener());
         this.mTitleView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (mInitOK) {
                     refreshMenuState();
                 }
             }
-        });
+        });*/
     }
+
+
+
+
+    void addTextItem(NoteItemText nt) {
+        //为父布局mEditParent添加一个子布局
+        getLayoutInflater().inflate(R.layout.edit_textlist_item, this.mEditParent);
+        //得到刚才加载的子布局
+        View item = this.mEditParent.getChildAt(this.mEditParent.getChildCount() - 1);
+        //得到子布局中的控件
+        EditDragView drag = (EditDragView) item.findViewById(R.id.drag);
+        CheckImageView check = (CheckImageView) item.findViewById(R.id.check);
+        NoteEditText edit = (NoteEditText) item.findViewById(R.id.text);
+        //设置文字
+        edit.setText(nt.mText);
+        //设置字体大小
+        edit.setTextSize((float) (this.mEditNote.mTextSize > 0 ? this.mEditNote.mTextSize : NoteData.DEFAULT_FONT_SIZE));
+
+        //为edit设置文字改变监听
+/*        if (this.mRestoreSwitch) {
+            edit.addTextChangedListener(new RestoreTextWatcher(edit));
+        }*/
+
+        DeleteImageView deleteView = (DeleteImageView) item.findViewById(R.id.delete);
+
+        switch (nt.mState) {
+            case REQUEST_CODE_PICK /*0*/:
+                drag.setImageType(nt.mState);
+                check.setImageType(nt.mState);
+                deleteView.setVisibility(View.VISIBLE);
+                return;
+            //先不管导出的情况
+/*            //导出为图片的情况
+            case REQUEST_CODE_EXPORT_TO_PIC *//*1*//*:
+                drag.setImageType(nt.mState);
+                check.setImageType(nt.mState);
+                //设置文字是否StrikeThrough
+                setEditStrikeThrough(edit, false);
+                deleteView.setVisibility(View.GONE);
+                return;
+            //导出为文本的情况
+            case REQUEST_CODE_EXPORT_TO_TEXT *//*2*//*:
+                drag.setImageType(nt.mState);
+                check.setImageType(nt.mState);
+                setEditStrikeThrough(edit, true);
+                deleteView.setVisibility(View.GONE);
+                return;*/
+            default:
+                return;
+        }
+    }
+
+
+    //在界面上加一个图片---重点分析
+    void addImageItem(NoteItemImage nt) {
+        //为父布局mEditParent添加一个子布局
+        getLayoutInflater().inflate(R.layout.edit_image, this.mEditParent);
+        //获得刚才添加的子布局
+        RichFrameLayout imageParent = (RichFrameLayout) this.mEditParent.getChildAt(this.mEditParent.getChildCount() - 1);
+        //为子布局设置尺寸
+        imageParent.setSize(nt.mWidth, nt.mHeight);
+        //为子布局涉资uuid和资源
+        imageParent.setUUIDandName(this.mEditNote.mUUId, nt.mFileName);
+    }
+
+
+    //在界面上加一个录音---重点分析
+    void addRecordItem(NoteItemRecord nt) {
+        //为父布局mEditParent添加一个子布局
+        getLayoutInflater().inflate(R.layout.edit_record_item, this.mEditParent);
+        //获得刚才添加的子布局
+        RichFrameLayout parent = (RichFrameLayout) this.mEditParent.getChildAt(this.mEditParent.getChildCount() - 1);
+        //为子布局涉资uuid和资源
+        parent.setUUIDandName(this.mEditNote.mUUId, nt.mFileName);
+        //录音
+        ((RecordLinearLayout) parent.findViewById(R.id.recordLayout)).setRecordPlayManager(this);
+    }
+
+
+
+    //创建OptionsMenu时
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.edit, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
 
 }
