@@ -1,6 +1,5 @@
 package com.meizu.flyme.notepaper;
 
-import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -39,7 +38,6 @@ import com.meizu.flyme.notepaper.database.NotePaper;
 import com.meizu.flyme.notepaper.utils.Constants;
 import com.meizu.flyme.notepaper.utils.HanziToPinyin;
 import com.meizu.flyme.notepaper.utils.NoteUtil;
-import com.meizu.flyme.notepaper.utils.ReflectUtils;
 import com.meizu.flyme.notepaper.widget.CheckImageView;
 import com.meizu.flyme.notepaper.widget.DeleteImageView;
 import com.meizu.flyme.notepaper.widget.DragShadowBuilderMz;
@@ -292,7 +290,7 @@ public class NoteEditActivity2 extends RecordActivityBase{
         }
 
         //加载tool_bar
-        edit_toolbar = (Toolbar) findViewById(R.id.toolbar);
+        edit_toolbar = (Toolbar) findViewById(R.id.edit_toolbar);
         setSupportActionBar(edit_toolbar);
         //得到最外层mScrollView
         this.mScrollView = (ScrollView) findViewById(R.id.scroll_view);
@@ -311,9 +309,10 @@ public class NoteEditActivity2 extends RecordActivityBase{
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         //设置图片，或录音控件宽度，屏幕宽度-200px
         this.mWidth = dm.widthPixels - 200;
+        //判断是否从浮动窗口打开？？
 
         //关键的地方，初始化界面的各种组件
-//        initContentView();
+        initContentView();
 
         //设置背景颜色为mEditNote.mPaper
 /*        if (this.mEditNote != null) {
@@ -444,9 +443,8 @@ public class NoteEditActivity2 extends RecordActivityBase{
         initEditLayout();
 
 
-
 //        初始化titlebar有许多问题
-        initTitle();
+//        initTitle();
 
 
 
@@ -652,50 +650,15 @@ public class NoteEditActivity2 extends RecordActivityBase{
 
     //设置titleView和titleToolBar
     public void initTitle() {
-        ActionBar actionBar = getActionBar();
-        //什么作用
-//        actionBar.setDisplayOptions(REQUEST_CODE_PICK);
-        //什么作用
-        ReflectUtils.setStatusBarDarkIcon(this, true);
-        //有什么用？？没搞懂用处
-//        ActionBarUtils.setActionModeHeaderHidden(actionBar, true);
-        //设置actionbar的布局文件
-//        actionBar.setCustomView(getLayoutInflater().inflate(R.layout.edit_title, null), new ActionBar.LayoutParams(-1, -1));
 
-        //什么作用
-//        actionBar.setDisplayShowCustomEnabled(true);
-//        actionBar.setDisplayOptions(CHANGE_CONTENT);
-        //得到刚刚加载的View
-//        ViewGroup custom = (ViewGroup) actionBar.getCustomView();
-        //得到刚刚加载的View的toolbar
 //        this.mTitleToolBar = (LinearLayout) custom.findViewById(R.id.toolBar);
 
         //设置mTitleView
 //        this.mTitleView = (EditTextCloud) custom.findViewById(R.id.title);
         //为mTitleView设置标题
 //        this.mTitleView.setText(this.mEditNote.mTitle);
-        //为mTitleView添加监听，文字改变监听，暂时不需要
-/*        this.mTitleView.addTextChangedListener(new TextWatcher() {
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
 
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            public void afterTextChanged(Editable s) {
-                setTitleChanged();
-            }
-        });*/
 //        this.mTitleView.clearFocus();
-        //先不管监听
-/*        this.mTitleView.setOnKeyPreImeListener(getKeyPreImeListener());
-        this.mTitleView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (mInitOK) {
-                    refreshMenuState();
-                }
-            }
-        });*/
     }
 
 
@@ -715,11 +678,6 @@ public class NoteEditActivity2 extends RecordActivityBase{
         //设置字体大小
         edit.setTextSize((float) (this.mEditNote.mTextSize > 0 ? this.mEditNote.mTextSize : NoteData.DEFAULT_FONT_SIZE));
 
-        //为edit设置文字改变监听
-/*        if (this.mRestoreSwitch) {
-            edit.addTextChangedListener(new RestoreTextWatcher(edit));
-        }*/
-
         DeleteImageView deleteView = (DeleteImageView) item.findViewById(R.id.delete);
 
         switch (nt.mState) {
@@ -728,22 +686,6 @@ public class NoteEditActivity2 extends RecordActivityBase{
                 check.setImageType(nt.mState);
                 deleteView.setVisibility(View.VISIBLE);
                 return;
-            //先不管导出的情况
-/*            //导出为图片的情况
-            case REQUEST_CODE_EXPORT_TO_PIC *//*1*//*:
-                drag.setImageType(nt.mState);
-                check.setImageType(nt.mState);
-                //设置文字是否StrikeThrough
-                setEditStrikeThrough(edit, false);
-                deleteView.setVisibility(View.GONE);
-                return;
-            //导出为文本的情况
-            case REQUEST_CODE_EXPORT_TO_TEXT *//*2*//*:
-                drag.setImageType(nt.mState);
-                check.setImageType(nt.mState);
-                setEditStrikeThrough(edit, true);
-                deleteView.setVisibility(View.GONE);
-                return;*/
             default:
                 return;
         }
@@ -780,9 +722,45 @@ public class NoteEditActivity2 extends RecordActivityBase{
     //创建OptionsMenu时
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.edit, menu);
+
+        if (menu != null) {
+            menu.clear();
+        }
+        if (this.mSoftInputShown) {
+            //当软键盘打开时，加载编辑时的菜单
+            getMenuInflater().inflate(R.menu.edit, menu);
+            this.mMenuPhoto = menu.findItem(R.id.photo);
+            this.mMenuRecord = menu.findItem(R.id.record);
+            this.mMenuList = menu.findItem(R.id.list);
+            this.mMenuDelete = menu.findItem(R.id.menu_delete);
+            this.mMenuMore = menu.findItem(R.id.more);
+        } else {
+            //当软键盘关闭时，加载浏览时菜单，一些View设置为null
+            getMenuInflater().inflate(R.menu.edit_browse, menu);
+            this.mMenuPhoto = null;
+            this.mMenuRecord = null;
+            this.mMenuList = null;
+            this.mMenuDelete = menu.findItem(R.id.menu_delete_browse);
+            this.mMenuMore = null;
+        }
+
+        this.mMenuPaper = menu.findItem(R.id.menu_change_paper);//纸张
+        this.mMenuShare = menu.findItem(R.id.menu_share);//分享
+        this.mMenuExport = menu.findItem(R.id.menu_export);//导出
+        this.mMenuExportPic = menu.findItem(R.id.menu_export_pic);//导出为图片
+        this.mMenuTop = menu.findItem(R.id.menu_top);//置顶
+        this.mMenuFloat = menu.findItem(R.id.menu_float);//浮动？？
+        this.mMenuDesktop = menu.findItem(R.id.menu_desktop);//桌面
+        if (!(this.mEditNote == null || this.mEditNote.mTopTime == 0)) {
+            this.mMenuTop.setChecked(true);
+        }
+        if (this.mEditNote != null && this.mEditNote.mDesktop > 0) {
+            this.mMenuDesktop.setChecked(true);
+        }
+        if (this.mEditNote != null && this.mEditNote.mEncrypt) {
+            this.mMenuDesktop.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
-
 
 }

@@ -18,6 +18,7 @@
         android:id="@id/scroll_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_below="@+id/edit_toolbar"
         android:layout_weight="1.0"
         android:clipToPadding="false"
         android:fadingEdge="none"
@@ -36,6 +37,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+                <include layout="@layout/edit_title" />
 
                 <LinearLayout
                     android:id="@id/edit_parent"
@@ -48,7 +50,7 @@
                     android:id="@id/empty"
                     android:layout_width="fill_parent"
                     android:layout_height="0.0dip"
-                    android:layout_weight="1.0" />
+                    android:layout_weight="0.99" />
 
                 <ImageView
                     android:id="@id/divider"
