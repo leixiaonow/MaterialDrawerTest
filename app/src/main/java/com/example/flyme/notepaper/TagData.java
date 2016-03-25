@@ -3,9 +3,9 @@ package com.example.flyme.notepaper;
 import android.database.Cursor;
 
 import com.example.flyme.notepaper.utils.NoteUtil;
-import com.meizu.flyme.notepaper.database.NotePaper.NoteCategory;
-import com.meizu.flyme.notepaper.database.NotePaper.NoteFiles;
-import com.meizu.flyme.notepaper.database.NotePaper.Notes;
+import com.example.flyme.notepaper.database.NotePaper.NoteCategory;
+import com.example.flyme.notepaper.database.NotePaper.NoteFiles;
+import com.example.flyme.notepaper.database.NotePaper.Notes;
 
 public class TagData {
     public static boolean FUN_ENCRYPT = true;

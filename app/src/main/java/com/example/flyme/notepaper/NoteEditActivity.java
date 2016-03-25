@@ -98,9 +98,9 @@ import com.example.flyme.notepaper.widget.RecordingLayout;
 import com.example.flyme.notepaper.widget.RichFrameLayout;
 import com.example.flyme.notepaper.widget.ScaleImageView;
 import com.example.leixiao.materialdrawertest.R;
-import com.meizu.flyme.notepaper.database.NotePaper.NoteFiles;
-import com.meizu.flyme.notepaper.database.NotePaper.Notes;
-import com.meizu.flyme.notepaper.widget.PopupPaperWindow.OnPopupStateChangeListener;
+import com.example.flyme.notepaper.database.NotePaper.NoteFiles;
+import com.example.flyme.notepaper.database.NotePaper.Notes;
+import com.example.flyme.notepaper.widget.PopupPaperWindow.OnPopupStateChangeListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1412,7 +1412,7 @@ public class NoteEditActivity extends RecordActivityBase {
         //为子布局涉资uuid和资源
         parent.setUUIDandName(this.mEditNote.mUUId, nt.mFileName);
         //录音
-        ((RecordLinearLayout) parent.findViewById(R.id.recordLayout)).setRecordPlayManager(this);
+        ((RecordLinearLayout) parent.findViewById(R.id.recordLayout)).setRecordPlayManager((RecordLinearLayout.RecordPlayManager) this);
     }
 
     //初始化EditLayout，长 且有些问题
@@ -4235,7 +4235,7 @@ public class NoteEditActivity extends RecordActivityBase {
         RichFrameLayout parent = (RichFrameLayout) inflater.inflate(R.layout.edit_record_item, null);
         parent.setUUIDandName(this.mEditNote.mUUId, name);
         this.mEditParent.addView(parent, position);
-        ((RecordLinearLayout) parent.findViewById(R.id.recordLayout)).setRecordPlayManager(this);
+        ((RecordLinearLayout) parent.findViewById(R.id.recordLayout)).setRecordPlayManager((RecordLinearLayout.RecordPlayManager) this);
         if (appendNew) {
             View item = inflater.inflate(R.layout.edit_textlist_item, null);
             NoteEditText newText = (NoteEditText) item.findViewById(R.id.text);

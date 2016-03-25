@@ -25,10 +25,10 @@ import com.example.flyme.notepaper.utils.Constants;
 import com.example.flyme.notepaper.utils.HanziToPinyin;
 import com.example.flyme.notepaper.utils.NoteUtil;
 import com.example.leixiao.materialdrawertest.R;
-import com.meizu.flyme.notepaper.database.NotePaper.AccountConstract;
-import com.meizu.flyme.notepaper.database.NotePaper.NoteCategory;
-import com.meizu.flyme.notepaper.database.NotePaper.NoteFiles;
-import com.meizu.flyme.notepaper.database.NotePaper.Notes;
+import com.example.flyme.notepaper.database.NotePaper.AccountConstract;
+import com.example.flyme.notepaper.database.NotePaper.NoteCategory;
+import com.example.flyme.notepaper.database.NotePaper.NoteFiles;
+import com.example.flyme.notepaper.database.NotePaper.Notes;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

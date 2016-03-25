@@ -37,13 +37,13 @@
         </activity>
         <activity android:name=".EditNoteActivity"></activity>
         <activity android:name=".ViewNoteActivity"></activity>
-        <activity android:name="com.meizu.flyme.notepaper.NoteEditActivity"></activity>
+        <activity android:name="com.example.flyme.notepaper.NoteEditActivity"></activity>
 
     </application>
 
     <!--<permission android:name="com.meizu.flyme.notepaper.push.permission.MESSAGE" android:protectionLevel="signature"/>-->
-    <permission android:name="com.meizu.flyme.notepaper.ACCESS_NOTES"/>
+    <permission android:name="com.example.flyme.notepaper.ACCESS_NOTES"/>
     <!--<uses-permission android:name="com.meizu.flyme.notepaper.push.permission.MESSAGE"/>-->
-    <uses-permission android:name="com.meizu.flyme.notepaper.ACCESS_NOTES"/>
+    <uses-permission android:name="com.example.flyme.notepaper.ACCESS_NOTES"/>
 
 </manifest>

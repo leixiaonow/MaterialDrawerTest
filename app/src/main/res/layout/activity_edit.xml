@@ -14,7 +14,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    <com.meizu.flyme.notepaper.widget.CustomScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.example.flyme.notepaper.widget.CustomScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@id/scroll_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -37,6 +37,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
                 <include layout="@layout/edit_title" />
 
                 <LinearLayout
@@ -76,5 +77,5 @@
                 android:background="@drawable/line_blue"
                 android:visibility="gone" />
         </FrameLayout>
-    </com.meizu.flyme.notepaper.widget.CustomScrollView>
+    </com.example.flyme.notepaper.widget.CustomScrollView>
 </RelativeLayout>

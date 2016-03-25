@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.meizu.flyme.notepaper.widget.RecordingLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.flyme.notepaper.widget.RecordingLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:tag="recording">
@@ -46,4 +46,4 @@
             android:scaleType="matrix"
             android:src="@drawable/mz_ic_stop" />
     </LinearLayout>
-</com.meizu.flyme.notepaper.widget.RecordingLayout>
+</com.example.flyme.notepaper.widget.RecordingLayout>

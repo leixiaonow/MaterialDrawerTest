@@ -5,8 +5,8 @@ import android.support.v4.view.ViewCompat;
 import android.util.Log;
 
 import com.example.flyme.notepaper.utils.NoteUtil;
-import com.meizu.flyme.notepaper.database.NotePaper.NoteFiles;
-import com.meizu.flyme.notepaper.database.NotePaper.Notes;
+import com.example.flyme.notepaper.database.NotePaper.NoteFiles;
+import com.example.flyme.notepaper.database.NotePaper.Notes;
 
 import org.json.JSONArray;
 import org.json.JSONException;

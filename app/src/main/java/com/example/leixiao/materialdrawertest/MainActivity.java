@@ -23,9 +23,9 @@ import com.example.leixiao.data.dao.impl.sqlite.NoteSQLiteDAO;
 import com.example.leixiao.data.source.sqlite.NotesDatabaseHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.meizu.flyme.notepaper.NoteEditActivity;
-import com.meizu.flyme.notepaper.database.NotePaper;
-import com.meizu.flyme.notepaper.utils.Constants;
+import com.example.flyme.notepaper.NoteEditActivity;
+import com.example.flyme.notepaper.database.NotePaper;
+import com.example.flyme.notepaper.utils.Constants;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.Drawer;
 

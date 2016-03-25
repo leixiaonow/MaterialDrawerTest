@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.meizu.flyme.notepaper.database.NotePaper.AccountConstract;
+import com.example.flyme.notepaper.database.NotePaper.AccountConstract;
 
 public class SyncStateContentProviderHelper {
     private static final String[] ACCOUNT_PROJECTION = new String[]{AccountConstract.ACCOUNT_NMAE, "account_type"};

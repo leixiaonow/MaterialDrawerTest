@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.example.flyme.notepaper.utils.NoteUtil;
 import com.example.flyme.notepaper.widget.DragShadowBuilderMz;
 import com.example.flyme.notepaper.widget.RecordLinearLayout;
-import com.meizu.flyme.notepaper.widget.RecordLinearLayout.RecordPlayManager;
+import com.example.flyme.notepaper.widget.RecordLinearLayout.RecordPlayManager;
 
 public class RecordActivityBase extends AppCompatActivity implements RecordPlayManager {
     public static final int NORMAL = 0;
