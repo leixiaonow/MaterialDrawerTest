@@ -3212,7 +3212,7 @@ public class NoteEditActivity extends RecordActivityBase {
                 value.put(NoteUtil.JSON_MTIME, Long.valueOf(file.lastModified()));
                 value.put(Constants.JSON_KEY_TYPE, Integer.valueOf(type));
                 //Unknown URL content://com.meizu.flyme.notepaper.NotePaper/notefiles
-//                NoteEditActivity.this.getContentResolver().insert(NoteFiles.CONTENT_URI, value);
+                NoteEditActivity.this.getContentResolver().insert(NoteFiles.CONTENT_URI, value);
             }
         }).start();
     }

@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.leixiao.notepaper.materialdrawertest">
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="com.android.permission.WHITELIST_BLUETOOTH_DEVICE"/>
-    <uses-permission android:name="android.permission.NFC"/>
-    <uses-permission android:name="com.android.usagestats.permission.READ_USAGESTATS"/>
-    <uses-permission android:name="com.android.usagestats.permission.WRITE_USAGESTATS"/>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS"/>
-    <uses-permission android:name="android.permission.MANAGE_USERS"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <!--<uses-permission android:name="com.meizu.flyme.push.permission.RECEIVE"/>-->
-    <!--<uses-permission android:name="android.permission.INSTALL_PACKAGES"/>-->
+
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.android.permission.WHITELIST_BLUETOOTH_DEVICE" />
+    <uses-permission android:name="com.android.usagestats.permission.READ_USAGESTATS" />
+    <uses-permission android:name="com.android.usagestats.permission.WRITE_USAGESTATS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS" />
+    <uses-permission android:name="android.permission.MANAGE_USERS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -38,9 +36,18 @@
         <activity android:name=".ViewNoteActivity"></activity>
         <activity android:name="com.example.leixiao.notepaper.NoteEditActivity"></activity>
 
+        <provider
+            android:name="com.example.leixiao.notepaper.database.NotePaperProvider"
+            android:authorities="com.example.leixiao.notepaper.NotePaper"
+            android:exported="true"
+            android:permission="com.example.leixiao.notepaper.ACCESS_NOTES" />
+        <provider
+            android:name="com.example.leixiao.notepaper.TempFileProvider"
+            android:authorities="com.example.leixiao.notepaper.TempFile"
+            android:exported="true" />
     </application>
+    
+    <uses-permission android:name="com.example.leixiao.notepaper.ACCESS_NOTES"/>
 
-    <!--<permission android:name="com.meizu.flyme.notepaper.push.permission.MESSAGE" android:protectionLevel="signature"/>-->
-    <!--<uses-permission android:name="com.meizu.flyme.notepaper.push.permission.MESSAGE"/>-->
 
 </manifest>
