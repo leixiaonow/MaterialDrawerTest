@@ -111,7 +111,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.UUID;
+
 public class NoteEditActivity extends RecordActivityBase {
+    public static final int MAX_WORDS = 20000;
+    public static final int MSG_SHARE_START = 0;
     private static final int CHANGE_CONTENT = 16;
     private static final int CHANGE_DESKTOP = 4;
     private static final int CHANGE_ENCRYPT = 8;
@@ -121,8 +124,6 @@ public class NoteEditActivity extends RecordActivityBase {
     private static final int CHANGE_TAG = 1048576;
     private static final int CHANGE_TITLE = 1;
     private static final int CHANGE_TOP = 2;
-    public static final int MAX_WORDS = 20000;
-    public static final int MSG_SHARE_START = 0;
     private static final int REQUEST_CODE_EXPORT_TO_PIC = 1;
     private static final int REQUEST_CODE_EXPORT_TO_TEXT = 2;
     private static final int REQUEST_CODE_LOGIN = 4;
@@ -142,9 +143,64 @@ public class NoteEditActivity extends RecordActivityBase {
     final int STATE_PAUSE_DELETE = REQUEST_CODE_SHARING;
     final int STATE_PAUSE_INSERT = REQUEST_CODE_EXPORT_TO_TEXT;
     final int STATE_PAUSE_SWITCH_TO_BACK = REQUEST_CODE_LOGIN;
-
-    private Button mButtonSave = null;//保存按钮????
     int mChanged = 0;
+    //拖动列？？？？
+    View mDragLine;
+    //正在编辑页面显示的笔记
+    NoteData mEditNote;
+    //所有笔记元素的父容器
+    LinearLayout mEditParent;
+    //第一张图片的路径？？名称？？
+    String mFirstImg;
+    //第一个录音的路径？？名称？？
+    String mFirstRecord;
+    //第一个TextView
+    TextView mFirstTextView;
+    //当前得到焦点的NoteEditText
+    NoteEditText mFocusNoteEditText;
+    //灰色值
+    int mGreyColor;
+    //？？？
+    Object mIMEListener;
+    ImageView mImageColorView;
+    //初始化是否完成？？？
+    boolean mInitOK = false;
+    //不知道？？
+    boolean mIsCapture;
+    //软键盘是否打开
+    boolean mIsSoftInuptShow = false;
+    //启动时间
+    long mLaunchTime;
+    //暂停状态？？
+    int mPauseState = REQUEST_CODE_LOGIN;
+    ListPopupWindow mPopup;
+    //位置？？什么位置？？
+    int mPosition;
+    //进度窗口
+    ProgressDialog mProgressDialog;
+    //录音水平和竖直间隔
+    int mRecordHorizontalMargin;
+    int mRecordVerticalMargin;
+    //录音布局
+    RecordingLayout mRecordingLayoutView;
+    //重做图片
+    ImageView mRedoView;
+    //滚动器，最外层控件
+    ScrollView mScrollView;
+    //分享时传递的Intent
+    Intent mShareIntent;
+    //如键盘是否显示的标识
+    boolean mSoftInputShown = false;
+    //tag编辑器，实际是文本编辑框
+    EditText mTagEditor;
+    //Tag列表
+    ArrayList<TagInfo> mTagList = new ArrayList();
+    //Tag下拉菜单
+    Spinner mTagSpinner;
+    //尾巴textVeiw，用来显示时间
+    TextView mTailView;
+    //文本颜色
+    int mTextColor;
     //CheckImageView 的监听事件
     OnClickListener mCheckClickListener = new OnClickListener() {
         public void onClick(View v) {
@@ -166,228 +222,18 @@ public class NoteEditActivity extends RecordActivityBase {
             }
         }
     };
-
-
-
-    private int mCount = 0;
-    //存储NoteItem的列表，文字，图片，和声音
-    private ArrayList<NoteItem> mDataList = new ArrayList();
-    //删除 点击 的监听 deleteImageView调用？？？
-    OnClickListener mDeleteClickListener = new OnClickListener() {
-        public void onClick(View v) {
-            View parentView = (View) v.getParent();
-            if (parentView != null) {
-                NoteEditText neText;
-                View before;
-                NoteEditText ntText;
-                ViewGroup pparentView = (ViewGroup) parentView.getParent();//edit_parent
-                int curLine = -1;
-                View after = null;
-                int count = NoteEditActivity.this.mEditParent.getChildCount();
-                //遍历mEditParent
-                int index=getChildPosition(parentView);
-//                for (int index = 0; index < count; index += 1) {
-                    //如果是单击删除的文本元素
-//                    if (NoteEditActivity.this.mEditParent.getChildAt(index) == parentView) {
-                        //得到其位置
-                        curLine = index;
-                        //如果不是最后一个元素
-                        if (index + 1< count) {
-                            //得到下一个元素
-                            View next = NoteEditActivity.this.mEditParent.getChildAt(index + 1);
-                            if (NoteUtil.JSON_TEXT.equals(next.getTag())) {
-                                after = next;
-                                Log.d(TAG, "onClick: 得到下一个元素");
-                            }
-                        }
-                        //有下一个元素，并且是文本元素时
-                        if (after != null) {
-                            Log.d(TAG, "onClick: after!=null");
-                            pparentView.removeView(parentView);
-                            neText = (NoteEditText) after.findViewById(R.id.text);
-                            if (((CheckImageView) after.findViewById(R.id.check)).getImageType() != 0) {
-                                NoteEditActivity.this.mergeCommonText(after);
-                                Log.d(TAG, "onClick: imageType!=0");
-                            } else {
-                                Log.d(TAG, "onClick: imageType==0");
-                                neText.requestFocus();
-                                Selection.setSelection(neText.getText(), 0);
-                                NoteEditActivity.this.showSoftInput(neText);
-                            }
-                        } else {//下一个元素为null时，即没有下一个元素时，或下一个元素不是文本元素时
-                            //得到前一个元素
-                            Log.d(TAG, "onClick: after==null");
-                            before = NoteEditActivity.this.mEditParent.getChildAt(curLine - 1);
-                            //如果前一个元素不为空，且是文本元素
-                            if (before != null && NoteUtil.JSON_TEXT.equals(before.getTag())) {
-                                pparentView.removeView(parentView);
-                                neText = (NoteEditText) before.findViewById(R.id.text);
-                                neText.requestFocus();
-                                Selection.setSelection(neText.getText(), neText.getText().length());
-                                NoteEditActivity.this.showSoftInput(neText);
-                            } else {//如果前一个元素为空，或不是文本元素
-                                ntText = (NoteEditText) parentView.findViewById(R.id.text);
-                                if (ntText.getTextSize() > 0.0f) {
-                                    ntText.setText(null);
-                                }
-                                if (((CheckImageView) parentView.findViewById(R.id.check)).getImageType() != 0) {
-                                    NoteEditActivity.this.onListMenuClick();
-                                }
-                            }
-                        }
-                        NoteEditActivity.this.setTextChanged();
-                        NoteEditActivity.this.setFirstHint();
-//                    }
-//                }
-
-/*                if (after == null) {
-                    before = NoteEditActivity.this.mEditParent.getChildAt(curLine - 1);
-                    if (before == null) {
-                    }
-                    ntText = (NoteEditText) parentView.findViewById(R.id.text);
-                    if (ntText.getTextSize() > 0.0f) {
-                        ntText.setText(null);
-                    }
-                    if (((CheckImageView) parentView.findViewById(R.id.check)).getImageType() != 0) {
-                        NoteEditActivity.this.onListMenuClick();
-                    }
-                } else {
-                    pparentView.removeView(parentView);
-
-                    neText = (NoteEditText) after.findViewById(R.id.text);
-                    if (((CheckImageView) after.findViewById(R.id.check)).getImageType() != 0) {
-                        neText.requestFocus();
-                        Selection.setSelection(neText.getText(), NoteEditActivity.REQUEST_CODE_PICK);
-                        NoteEditActivity.this.showSoftInput(neText);
-                    } else {
-                        NoteEditActivity.this.mergeCommonText(after);
-                    }
-                }
-                NoteEditActivity.this.setTextChanged();
-                NoteEditActivity.this.setFirstHint();*/
-            }
-        }
-    };
-
-
-    //删除文件列表
-    private HashSet<String> mDeleteFilesList;
-    //拖动列？？？？
-    View mDragLine;
-    //键盘监听
-    public OnKeyListener mEditKeyPreListener = new OnKeyListener() {
-        public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (event.getAction() == 0 && keyCode == 66) {
-                return NoteEditActivity.this.onKeyEnter();
-            }
-            if (event.getAction() == 0 && keyCode == 67) {
-                return NoteEditActivity.this.onKeyDel();
-            }
-            return false;
-        }
-    };
-    //正在编辑页面显示的笔记
-    NoteData mEditNote;
-    //所有笔记元素的父容器
-    LinearLayout mEditParent;
-    //第一张图片的路径？？名称？？
-    String mFirstImg;
-    //第一个录音的路径？？名称？？
-    String mFirstRecord;
-    //第一个TextView
-    TextView mFirstTextView;
-    //桌面显示的标签？？
-    private boolean mFloatFlag = false;
-    //当前光标焦点？？？
-    private int mFocusId = -2;
-    //当前得到焦点的NoteEditText
-    NoteEditText mFocusNoteEditText;
-    //灰色值
-    int mGreyColor;
-    //分类切换开关
-    private boolean mGroupSwitch = true;
-    //多线程
-    private Handler mHandler = new Handler();
-    //？？？
-    Object mIMEListener;
-    ImageView mImageColorView;
-    //初始化是否完成？？？
-    boolean mInitOK = false;
-    //不知道？？
-    boolean mIsCapture;
-    //软键盘是否打开
-    boolean mIsSoftInuptShow = false;
-    //启动时间
-    long mLaunchTime;
-
-    private MenuItem mMenuDelete;//删除
-    private MenuItem mMenuDesktop;//显示到桌面
-    private MenuItem mMenuExport;//导出
-    private MenuItem mMenuExportPic;//导出为图片
-    private MenuItem mMenuFloat;//浮动？
-    private MenuItem mMenuList;//？？
-    private MenuItem mMenuMore;//更多？
-    private MenuItem mMenuPaper;//背景纸
-    private MenuItem mMenuPhoto;//照片
-    private MenuItem mMenuRecord;//录音
-    private MenuItem mMenuShare;//分享
-    private MenuItem mMenuTop;//置顶
-    //新标签？？
-    private boolean mNewFlag = false;
-    //什么监听？？
-    private EditTextCloud.OnKeyPreImeListener mOnKeyPreImeListener = new EditTextCloud.OnKeyPreImeListener() {
-        public boolean onKeyPreIme(View view, int keyCode, KeyEvent event) {
-            if (keyCode == NoteEditActivity.REQUEST_CODE_LOGIN && event.getAction() == NoteEditActivity.REQUEST_CODE_EXPORT_TO_PIC && TextUtils.isEmpty(NoteEditActivity.this.mTitleView.getText())) {
-                if (NoteEditActivity.this.mEditParent.getChildCount() > NoteEditActivity.REQUEST_CODE_EXPORT_TO_PIC) {
-                    return false;
-                }
-                View child = NoteEditActivity.this.mEditParent.getChildAt(NoteEditActivity.REQUEST_CODE_PICK);
-                if (NoteUtil.JSON_TEXT.equals((String) child.getTag()) && TextUtils.isEmpty(((NoteEditText) child.findViewById(R.id.text)).getText())) {
-                    NoteEditActivity.this.onBackPressed();
-                    return true;
-                }
-            }
-            return false;
-        }
-    };
-    //暂停状态？？
-    int mPauseState = REQUEST_CODE_LOGIN;
-    ListPopupWindow mPopup;
-
-    //位置？？什么位置？？
-    int mPosition;
-    //进度窗口
-    ProgressDialog mProgressDialog;
-
-    //录音水平和竖直间隔
-    int mRecordHorizontalMargin;
-    int mRecordVerticalMargin;
-    //录音布局
-    RecordingLayout mRecordingLayoutView;
-    //重做图片
-    ImageView mRedoView;
-    //请求码
-    private int mRequestCode = -1;
-    //广播接收器
-    private BroadcastReceiver mScreenOffAndHomeReceiver = null;
-    //滚动器，最外层控件
-    ScrollView mScrollView;
-    //选择开始处
-    private int mSelectStart = -1;
-    //分享时传递的Intent
-    Intent mShareIntent;
-    //如键盘是否显示的标识
-    boolean mSoftInputShown = false;
-    //tag编辑器，实际是文本编辑框
-    EditText mTagEditor;
-    //Tag列表
-    ArrayList<TagInfo> mTagList = new ArrayList();
-    //Tag下拉菜单
-    Spinner mTagSpinner;
-    //尾巴textVeiw，用来显示时间
-    TextView mTailView;
-    //文本颜色
-    int mTextColor;
+    LinearLayout mTitleFontBack;
+    //toolbar工具栏
+    LinearLayout mTitleToolBar;
+    //标题栏
+    EditTextCloud mTitleView;
+    //类型，
+    int mType;
+    //笔记的图片元素
+    RichFrameLayout mViewImageItem;
+    //宽度？？什么的宽度
+    int mWidth;
+    private Button mButtonSave = null;//保存按钮????
     //文本监听器
     TextWatcher mTextWatch = new TextWatcher() {
         public void afterTextChanged(Editable editable) {
@@ -406,44 +252,84 @@ public class NoteEditActivity extends RecordActivityBase {
         public void onTextChanged(CharSequence s, int start, int before, int count) {
         }
     };
-
-    //时间改变广播接收器
-    private BroadcastReceiver mTimeChangedReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            if ("android.intent.action.TIME_SET".equals(intent.getAction())) {
-                String createTime = NoteEditActivity.this.getResources().getString(R.string.create_time) + HanziToPinyin.Token.SEPARATOR + NoteUtil.getDate(NoteEditActivity.this, NoteEditActivity.this.mEditNote.mCreateTime);
-                String modifyTime = NoteEditActivity.this.getResources().getString(R.string.last_modified) + HanziToPinyin.Token.SEPARATOR + NoteUtil.getDate(NoteEditActivity.this, NoteEditActivity.this.mEditNote.mModifyTime);
-                switch (NoteEditActivity.this.mType) {
-                    case NoteUtil.EDIT_TYPE_FLOAT /*-6*/:
-                        if (NoteEditActivity.this.mNewFlag) {
-                            NoteEditActivity.this.mTailView.setText(createTime);
-                            return;
-                        } else {
-                            NoteEditActivity.this.mTailView.setText(modifyTime);
-                            return;
-                        }
-                    case NoteUtil.EDIT_TYPE_UPDATE /*-5*/:
-                        NoteEditActivity.this.mTailView.setText(modifyTime);
-                        return;
-                    case NoteUtil.EDIT_TYPE_CAMERA /*-4*/:
-                    case NoteUtil.EDIT_TYPE_RECORD /*-3*/:
-                    case NoteUtil.EDIT_TYPE_LIST /*-2*/:
-                    case DragShadowBuilderMz.STATE_IDLE /*-1*/:
-                        NoteEditActivity.this.mTailView.setText(createTime);
-                        return;
-                    default:
-                        return;
+    private int mCount = 0;
+    //删除 点击 的监听 deleteImageView调用？？？
+    OnClickListener mDeleteClickListener = new OnClickListener() {
+        public void onClick(View v) {
+            View parentView = (View) v.getParent();
+            if (parentView != null) {
+                NoteEditText neText;
+                View before;
+                NoteEditText ntText;
+                ViewGroup pparentView = (ViewGroup) parentView.getParent();//edit_parent
+                int curLine;
+                View after = null;
+                int count = NoteEditActivity.this.mEditParent.getChildCount();
+                //遍历mEditParent
+                int index = getChildPosition(parentView);
+                //得到其位置
+                curLine = index;
+                //如果不是最后一个元素
+                if (index + 1 < count) {
+                    //得到下一个元素
+                    View next = NoteEditActivity.this.mEditParent.getChildAt(index + 1);
+                    if (NoteUtil.JSON_TEXT.equals(next.getTag())) {
+                        after = next;
+                        Log.d(TAG, "onClick: 得到下一个元素");
+                    }
                 }
+                //有下一个元素，并且是文本元素时
+                if (after != null) {
+                    Log.d(TAG, "onClick: after!=null");
+                    pparentView.removeView(parentView);
+                    neText = (NoteEditText) after.findViewById(R.id.text);
+                    neText.requestFocus();
+                    if (((CheckImageView) after.findViewById(R.id.check)).getImageType() != 0) {
+                        NoteEditActivity.this.mergeCommonText(after);
+                        Log.d(TAG, "onClick: imageType!=0");
+                    } else {
+                        Log.d(TAG, "onClick: imageType==0");
+                        Selection.setSelection(neText.getText(), 0);
+                        NoteEditActivity.this.showSoftInput(neText);
+                    }
+                } else {//下一个元素为null时，即没有下一个元素时，或下一个元素不是文本元素时
+                    //得到前一个元素
+                    Log.d(TAG, "onClick: after==null");
+                    before = NoteEditActivity.this.mEditParent.getChildAt(curLine - 1);
+                    //如果前一个元素不为空，且是文本元素
+                    if (before != null && NoteUtil.JSON_TEXT.equals(before.getTag())) {
+                        pparentView.removeView(parentView);
+                        neText = (NoteEditText) before.findViewById(R.id.text);
+                        neText.requestFocus();
+                        Selection.setSelection(neText.getText(), neText.getText().length());
+                        NoteEditActivity.this.showSoftInput(neText);
+                    } else {//如果前一个元素为空，或不是文本元素
+                        ntText = (NoteEditText) parentView.findViewById(R.id.text);
+                        if (ntText.getTextSize() > 0.0f) {
+                            ntText.setText(null);
+                        }
+                        if (((CheckImageView) parentView.findViewById(R.id.check)).getImageType() != 0) {
+                            NoteEditActivity.this.onListMenuClick();
+                        }
+                    }
+                }
+                NoteEditActivity.this.setTextChanged();
+                NoteEditActivity.this.setFirstHint();
             }
         }
     };
-    LinearLayout mTitleFontBack;
-    //toolbar工具栏
-    LinearLayout mTitleToolBar;
-    //标题栏
-    EditTextCloud mTitleView;
-    //类型，
-    int mType;
+    //存储NoteItem的列表，文字，图片，和声音
+    private ArrayList<NoteItem> mDataList = new ArrayList();
+    //删除文件列表
+    private HashSet<String> mDeleteFilesList;
+    //桌面显示的标签？？
+    private boolean mFloatFlag = false;
+    //当前光标焦点？？？
+    private int mFocusId = -2;
+    //分类切换开关
+    private boolean mGroupSwitch = true;
+    //多线程
+    private Handler mHandler = new Handler();
     //界面更新Handler
     Handler mUiHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -486,11 +372,86 @@ public class NoteEditActivity extends RecordActivityBase {
             }
         }
     };
-    //笔记的图片元素
-    RichFrameLayout mViewImageItem;
+    private MenuItem mMenuDelete;//删除
+    private MenuItem mMenuDesktop;//显示到桌面
+    private MenuItem mMenuExport;//导出
+    private MenuItem mMenuExportPic;//导出为图片
+    private MenuItem mMenuFloat;//浮动？
+    private MenuItem mMenuList;//？？
+    private MenuItem mMenuMore;//更多？
+    private MenuItem mMenuPaper;//背景纸
+    private MenuItem mMenuPhoto;//照片
+    private MenuItem mMenuRecord;//录音
+    private MenuItem mMenuShare;//分享
+    private MenuItem mMenuTop;//置顶
+    //键盘监听
+    public OnKeyListener mEditKeyPreListener = new OnKeyListener() {
+        @Override
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+            if (event.getAction() == 0 && keyCode == 66) {
+                return NoteEditActivity.this.onKeyEnter();
+            }
+            if (event.getAction() == 0 && keyCode == 67) {
+                return NoteEditActivity.this.onKeyDel();
+            }
+            return false;
+        }
+    };
+    //新标签？？
+    private boolean mNewFlag = false;
+    //什么监听？？
+    private EditTextCloud.OnKeyPreImeListener mOnKeyPreImeListener = new EditTextCloud.OnKeyPreImeListener() {
+        public boolean onKeyPreIme(View view, int keyCode, KeyEvent event) {
+            if (keyCode == NoteEditActivity.REQUEST_CODE_LOGIN && event.getAction() == NoteEditActivity.REQUEST_CODE_EXPORT_TO_PIC && TextUtils.isEmpty(NoteEditActivity.this.mTitleView.getText())) {
+                if (NoteEditActivity.this.mEditParent.getChildCount() > NoteEditActivity.REQUEST_CODE_EXPORT_TO_PIC) {
+                    return false;
+                }
+                View child = NoteEditActivity.this.mEditParent.getChildAt(NoteEditActivity.REQUEST_CODE_PICK);
+                if (NoteUtil.JSON_TEXT.equals((String) child.getTag()) && TextUtils.isEmpty(((NoteEditText) child.findViewById(R.id.text)).getText())) {
+                    NoteEditActivity.this.onBackPressed();
+                    return true;
+                }
+            }
+            return false;
+        }
+    };
+    //请求码
+    private int mRequestCode = -1;
+    //广播接收器
+    private BroadcastReceiver mScreenOffAndHomeReceiver = null;
+    //选择开始处
+    private int mSelectStart = -1;
+    //时间改变广播接收器
+    private BroadcastReceiver mTimeChangedReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            if ("android.intent.action.TIME_SET".equals(intent.getAction())) {
+                String createTime = NoteEditActivity.this.getResources().getString(R.string.create_time) + HanziToPinyin.Token.SEPARATOR + NoteUtil.getDate(NoteEditActivity.this, NoteEditActivity.this.mEditNote.mCreateTime);
+                String modifyTime = NoteEditActivity.this.getResources().getString(R.string.last_modified) + HanziToPinyin.Token.SEPARATOR + NoteUtil.getDate(NoteEditActivity.this, NoteEditActivity.this.mEditNote.mModifyTime);
+                switch (NoteEditActivity.this.mType) {
+                    case NoteUtil.EDIT_TYPE_FLOAT /*-6*/:
+                        if (NoteEditActivity.this.mNewFlag) {
+                            NoteEditActivity.this.mTailView.setText(createTime);
+                            return;
+                        } else {
+                            NoteEditActivity.this.mTailView.setText(modifyTime);
+                            return;
+                        }
+                    case NoteUtil.EDIT_TYPE_UPDATE /*-5*/:
+                        NoteEditActivity.this.mTailView.setText(modifyTime);
+                        return;
+                    case NoteUtil.EDIT_TYPE_CAMERA /*-4*/:
+                    case NoteUtil.EDIT_TYPE_RECORD /*-3*/:
+                    case NoteUtil.EDIT_TYPE_LIST /*-2*/:
+                    case DragShadowBuilderMz.STATE_IDLE /*-1*/:
+                        NoteEditActivity.this.mTailView.setText(createTime);
+                        return;
+                    default:
+                        return;
+                }
+            }
+        }
+    };
     private boolean mWidgetJump;
-    //宽度？？什么的宽度
-    int mWidth;
     //电话状态监听器
     private PhoneStateListener phoneStateListener = new PhoneStateListener() {
         public void onCallStateChanged(int state, String incomingNumber) {
@@ -508,61 +469,6 @@ public class NoteEditActivity extends RecordActivityBase {
     };
     //电话管理器
     private TelephonyManager telephonyManager;
-
-
-
-    class ListShadowBuilder extends DragShadowBuilder {
-        private int mBottomMargin;
-        private int mLineSpace;
-        private int mMargin;
-        private int mTopMargin;
-        private int mWidth;
-
-        public ListShadowBuilder(View view) {
-            super(view);
-            Resources resources = view.getContext().getResources();
-            this.mMargin = resources.getDimensionPixelSize(R.dimen.edit_item_dragshadow_space);
-            this.mLineSpace = resources.getDimensionPixelSize(R.dimen.edit_text_line_space);
-            this.mTopMargin = resources.getDimensionPixelSize(R.dimen.edit_note_edit_top_margin);
-            this.mBottomMargin = resources.getDimensionPixelSize(R.dimen.edit_text_bottom_margin);
-        }
-
-        public void onDrawShadow(Canvas canvas) {
-            View view = getView();
-            Drawable background = view.getContext().getResources().getDrawable(R.drawable.list_choosen_background);
-            background.setBounds(NoteEditActivity.REQUEST_CODE_PICK, NoteEditActivity.REQUEST_CODE_PICK, canvas.getWidth(), canvas.getHeight());
-            background.draw(canvas);
-            canvas.save();
-            canvas.translate(0.0f, (float) ((this.mMargin - view.getPaddingTop()) - this.mTopMargin));
-            super.onDrawShadow(canvas);
-            canvas.restore();
-        }
-
-        public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint) {
-            View view = getView();
-            if (view != null) {
-                shadowSize.set(view.getWidth(), (((((view.getHeight() - view.getPaddingTop()) - view.getPaddingBottom()) - this.mLineSpace) - this.mTopMargin) - this.mBottomMargin) + (this.mMargin * NoteEditActivity.REQUEST_CODE_EXPORT_TO_TEXT));
-                shadowTouchPoint.set(NoteEditActivity.REQUEST_CODE_PICK, 40);
-            }
-        }
-    }
-
-
-    //Tag信息类
-    class TagInfo {
-        long id;
-        String name;
-
-        public TagInfo(long tid, String tname) {
-            this.id = tid;
-            this.name = tname;
-        }
-
-        public String toString() {
-            return this.name;
-        }
-    }
-
     private Toolbar edit_toolbar;
 
     //入口
@@ -575,7 +481,7 @@ public class NoteEditActivity extends RecordActivityBase {
         }
 
         //加载toolbar
-        edit_toolbar=(Toolbar) findViewById(R.id.edit_toolbar);
+        edit_toolbar = (Toolbar) findViewById(R.id.edit_toolbar);
         setSupportActionBar(edit_toolbar);
         //得到最外层mScrollView
         this.mScrollView = (ScrollView) findViewById(R.id.scroll_view);
@@ -595,13 +501,13 @@ public class NoteEditActivity extends RecordActivityBase {
         this.mWidth = dm.widthPixels - 200;
 //            if (!DelayProcSendIntent(getIntent())) {
 
-                //关键的地方，初始化界面的各种组件
-                initContentView();
+        //关键的地方，初始化界面的各种组件
+        initContentView();
 
-                if (this.mEditNote != null) {
-                    //设置背景颜色为mEditNote.mPaper
-                    getWindow().setBackgroundDrawable(new ColorDrawable(NoteUtil.getBackgroundColor(this.mEditNote.mPaper)));
-                }
+        if (this.mEditNote != null) {
+            //设置背景颜色为mEditNote.mPaper
+            getWindow().setBackgroundDrawable(new ColorDrawable(NoteUtil.getBackgroundColor(this.mEditNote.mPaper)));
+        }
 //            }
 
         //高级加密，当按home和屏幕熄灭时关闭笔记,根据参数，关闭方式还不同
@@ -997,16 +903,11 @@ public class NoteEditActivity extends RecordActivityBase {
         LinearLayout lastTimeView = (LinearLayout) contentParent.findViewById(R.id.last_parent);
 
 
-
         //重点来了
         initEditLayout();
 
 
-
-
-
         initTitle();
-
 
 
         this.mInitOK = true;
@@ -1030,15 +931,15 @@ public class NoteEditActivity extends RecordActivityBase {
 //        View view = this.mScrollView.findViewById(R.id.frame_parent);
 
         switch (this.mType) {
-                    case NoteUtil.EDIT_TYPE_CAMERA /*-4*/:
-                        if (checkSdcardOK() && this.mType == -4) {
-                            this.mHandler.postDelayed(new Runnable() {
-                                public void run() {
-                                    NoteEditActivity.this.onInsertImage();
-                                }
-                            }, 500);
-                            break;
+            case NoteUtil.EDIT_TYPE_CAMERA /*-4*/:
+                if (checkSdcardOK() && this.mType == -4) {
+                    this.mHandler.postDelayed(new Runnable() {
+                        public void run() {
+                            NoteEditActivity.this.onInsertImage();
                         }
+                    }, 500);
+                    break;
+                }
             case NoteUtil.EDIT_TYPE_RECORD /*-3*/:
                 if (checkSdcardOK()) {
                     onRecord();
@@ -1285,25 +1186,6 @@ public class NoteEditActivity extends RecordActivityBase {
         this.mPopup = null;
     }
 
-    //查询taglist
-/*    void queryTagList() {
-        this.mTagList.clear();
-        this.mTagList.add(new TagInfo(-1, getString(R.string.all_tag)));
-        Cursor c = getContentResolver().query(NoteCategory.CONTENT_URI, TagData.TAGS_LIST, NoteCategory.DELETE + "<> 1", null, NoteCategory.DEFAULT_SORT_ORDER);
-        if (c != null) {
-            int cID = c.getColumnIndex(NoteFiles.DEFAULT_SORT_ORDER);
-            int cName = c.getColumnIndex(NoteUtil.JSON_FILE_NAME);
-            while (c.moveToNext()) {
-                this.mTagList.add(new TagInfo(c.getLong(cID), c.getString(cName)));
-            }
-            c.close();
-        }
-        if (TagData.FUN_ENCRYPT) {
-            this.mTagList.add(new TagInfo(-2, getString(R.string.group_encrypt)));
-        }
-        this.mTagList.add(new TagInfo(-3, getString(R.string.new_tag)));
-    }*/
-
     //不就是设置提示吧
     void setFirstHint() {
         TextView first = null;
@@ -1332,6 +1214,25 @@ public class NoteEditActivity extends RecordActivityBase {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
     }
+
+    //查询taglist
+/*    void queryTagList() {
+        this.mTagList.clear();
+        this.mTagList.add(new TagInfo(-1, getString(R.string.all_tag)));
+        Cursor c = getContentResolver().query(NoteCategory.CONTENT_URI, TagData.TAGS_LIST, NoteCategory.DELETE + "<> 1", null, NoteCategory.DEFAULT_SORT_ORDER);
+        if (c != null) {
+            int cID = c.getColumnIndex(NoteFiles.DEFAULT_SORT_ORDER);
+            int cName = c.getColumnIndex(NoteUtil.JSON_FILE_NAME);
+            while (c.moveToNext()) {
+                this.mTagList.add(new TagInfo(c.getLong(cID), c.getString(cName)));
+            }
+            c.close();
+        }
+        if (TagData.FUN_ENCRYPT) {
+            this.mTagList.add(new TagInfo(-2, getString(R.string.group_encrypt)));
+        }
+        this.mTagList.add(new TagInfo(-3, getString(R.string.new_tag)));
+    }*/
 
     @Override
     public void finish() {
@@ -1401,7 +1302,6 @@ public class NoteEditActivity extends RecordActivityBase {
         });
     }
 
-
     //着当前FocusEditView
     public View findFocusEditView() {
         if (this.mFocusNoteEditText != null && this.mFocusNoteEditText.hasFocus()) {
@@ -1444,7 +1344,6 @@ public class NoteEditActivity extends RecordActivityBase {
         }
         return false;
     }
-
 
     //添加文本--重点分析
     void addTextItem(NoteItemText nt) {
@@ -1570,15 +1469,15 @@ public class NoteEditActivity extends RecordActivityBase {
             }
         }
 
-            //如果是新加的，则添加一个NoteItemText
-            if (addNew) {
-                nt2 = new NoteItemText();
-                nt2.mState = 0;
-                if (this.mType == -2) {
-                    nt2.mState = 1;
-                }
-                addTextItem(nt2);
+        //如果是新加的，则添加一个NoteItemText
+        if (addNew) {
+            nt2 = new NoteItemText();
+            nt2.mState = 0;
+            if (this.mType == -2) {
+                nt2.mState = 1;
             }
+            addTextItem(nt2);
+        }
     }
 
     public OnClickListener getCheckClickListener() {
@@ -1717,7 +1616,6 @@ public class NoteEditActivity extends RecordActivityBase {
         setEditStrikeThrough(neText, false);
         mergeCommonText(parent);
     }
-
 
     //按键盘的删除按钮？？？
     boolean onKeyDel() {
@@ -1865,17 +1763,17 @@ public class NoteEditActivity extends RecordActivityBase {
                     int len = newText.getText().length();
                     if (check.getImageType() == 0) {
 
-                            if (newfocus + REQUEST_CODE_EXPORT_TO_PIC < this.mEditParent.getChildCount()) {
-                                nextView = this.mEditParent.getChildAt(newfocus + REQUEST_CODE_EXPORT_TO_PIC);
-                                if (NoteUtil.JSON_TEXT.equals(nextView.getTag())) {
-                                    NoteEditText nextTextView = (NoteEditText) nextView.findViewById(R.id.text);
-                                    if (((CheckImageView) nextView.findViewById(R.id.check)).getImageType() == 0) {
-                                        newText.append("\n");
-                                        newText.append(nextTextView.getText());
-                                        this.mEditParent.removeViewAt(newfocus + REQUEST_CODE_EXPORT_TO_PIC);
-                                    }
+                        if (newfocus + REQUEST_CODE_EXPORT_TO_PIC < this.mEditParent.getChildCount()) {
+                            nextView = this.mEditParent.getChildAt(newfocus + REQUEST_CODE_EXPORT_TO_PIC);
+                            if (NoteUtil.JSON_TEXT.equals(nextView.getTag())) {
+                                NoteEditText nextTextView = (NoteEditText) nextView.findViewById(R.id.text);
+                                if (((CheckImageView) nextView.findViewById(R.id.check)).getImageType() == 0) {
+                                    newText.append("\n");
+                                    newText.append(nextTextView.getText());
+                                    this.mEditParent.removeViewAt(newfocus + REQUEST_CODE_EXPORT_TO_PIC);
                                 }
                             }
+                        }
 
                     }
                     newText.requestFocus();
@@ -1901,7 +1799,6 @@ public class NoteEditActivity extends RecordActivityBase {
             e.printStackTrace();
         }
     }
-
 
     //合并公共的text，
     void mergeCommonText(View parent) {
@@ -2071,6 +1968,28 @@ public class NoteEditActivity extends RecordActivityBase {
         }
         setFirstHint();
         this.mChanged |= CHANGE_CONTENT;
+    }
+
+    //保存，新线程调用saveImpl();
+    void save() {
+        if (this.mPauseState != REQUEST_CODE_EXPORT_TO_TEXT && this.mPauseState != REQUEST_CODE_SHARING) {
+            new Thread(new Runnable() {
+                public void run() {
+//                    NoteEditActivity.this.saveImpl();
+                    NoteEditActivity.this.mChanged = 0;
+                }
+            }).start();
+        }
+    }
+
+    //按返回键
+    public void onBackPressed() {
+        this.mPauseState = REQUEST_CODE_EXPORT_TO_PIC;
+        if (this.mRecordingLayoutView != null) {
+            this.mRecordingLayoutView.stopRecording(false);
+            this.mRecordingLayoutView = null;
+        }
+        super.onBackPressed();
     }
 
 
@@ -2920,28 +2839,6 @@ public class NoteEditActivity extends RecordActivityBase {
         }
     }*/
 
-    //保存，新线程调用saveImpl();
-    void save() {
-        if (this.mPauseState != REQUEST_CODE_EXPORT_TO_TEXT && this.mPauseState != REQUEST_CODE_SHARING) {
-            new Thread(new Runnable() {
-                public void run() {
-//                    NoteEditActivity.this.saveImpl();
-                    NoteEditActivity.this.mChanged = 0;
-                }
-            }).start();
-        }
-    }
-
-    //按返回键
-    public void onBackPressed() {
-        this.mPauseState = REQUEST_CODE_EXPORT_TO_PIC;
-        if (this.mRecordingLayoutView != null) {
-            this.mRecordingLayoutView.stopRecording(false);
-            this.mRecordingLayoutView = null;
-        }
-        super.onBackPressed();
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -3175,16 +3072,22 @@ public class NoteEditActivity extends RecordActivityBase {
             return null;
         }
         String path = uri.getPath();
+        Log.d(TAG, "addImage: path"+path);
         if (path == null || !path.equals(TempFileProvider.getScrapPath(context))) {
             int result = ImageUtil.saveIntoFile(context, uri, file);
+            Log.d(TAG, "addImage: result:"+result);
+
             if (result == 0) {
+                Log.d(TAG, "addImage: file.getName();"+file.getName());
                 return file.getName();
             }
             showErrorTip(result);
             return null;
         }
+        Log.d(TAG, "addImage: path != null 或 !path.equals(TempFileProvider.getScrapPath(context)");
         File cameraFile = new File(path);
         if (cameraFile.renameTo(file)) {
+            Log.d(TAG, "addImage: file.getName();"+file.getName());
             return file.getName();
         }
         Log.d(TAG, "renameTo fail: from " + cameraFile.getPath() + " to :" + file.getPath());
@@ -3197,6 +3100,7 @@ public class NoteEditActivity extends RecordActivityBase {
             this.mPauseState = REQUEST_CODE_LOGIN;
         }
         if (requestCode == 0) {
+            Log.d(TAG, "onActivityResult: requestCode==0");
             View view = findFocusView();
             if (view == null && this.mTitleView.hasFocus()) {
                 view = this.mTitleView;
@@ -3210,14 +3114,20 @@ public class NoteEditActivity extends RecordActivityBase {
             }
         }
         if (resultCode == -1) {
+            Log.d(TAG, "onActivityResult: resultCode==-1");
             Uri uri = null;
             switch (requestCode) {
                 case REQUEST_CODE_PICK /*0*/:
+                    Log.d(TAG, "onActivityResult: requestCode=0");
                     if (data != null) {
                         uri = data.getData();
+                        Log.d(TAG, "onActivityResult: "+uri);
                         if (uri != null && uri.getAuthority().equals(TempFileProvider.AUTHORITY)) {
+                            Log.d(TAG, "onActivityResult: equals(TempFileProvider.AUTHORITY)");
                             uri = Uri.fromFile(TempFileProvider.getScrapPath(this));
+                            Log.d(TAG, "onActivityResult: Uri.fromFile"+uri);
                         } else if (uri.getScheme().equals("file")) {
+                            Log.d(TAG, "onActivityResult: equals(\"file\")");
                             String path = uri.getPath();
                             sLastInsertDirPath = path.substring(REQUEST_CODE_PICK, path.lastIndexOf(File.separatorChar));
                             if (isLockDir(sLastInsertDirPath)) {
@@ -3226,6 +3136,7 @@ public class NoteEditActivity extends RecordActivityBase {
                         }
                     }
                     if (uri != null) {
+                        Log.d(TAG, "onActivityResult: uri!=null");
                         String picName = addImage(this, uri, this.mEditNote.mUUId);
                         if (picName != null) {
                             insertImage(picName);
@@ -3235,6 +3146,7 @@ public class NoteEditActivity extends RecordActivityBase {
                     }
                     return;
                 case REQUEST_CODE_EXPORT_TO_PIC /*1*/:
+                    Log.d(TAG, "onActivityResult: requestCode=1");
                     if (data != null) {
                         sLastExportPicDirPath = data.getData().getPath();
                         popupProgressDialog(R.string.exporting);
@@ -3255,6 +3167,7 @@ public class NoteEditActivity extends RecordActivityBase {
                     }
                     break;
                 case REQUEST_CODE_EXPORT_TO_TEXT /*2*/:
+                    Log.d(TAG, "onActivityResult: requestCode=2");
                     if (data != null) {
                         sLastExportTextDirPath = data.getData().getPath();
                         popupProgressDialog(R.string.exporting);
@@ -3298,7 +3211,8 @@ public class NoteEditActivity extends RecordActivityBase {
 //                value.put(NoteFiles.MD5, NoteUtil.md5sum(file.getPath()));
                 value.put(NoteUtil.JSON_MTIME, Long.valueOf(file.lastModified()));
                 value.put(Constants.JSON_KEY_TYPE, Integer.valueOf(type));
-                NoteEditActivity.this.getContentResolver().insert(NoteFiles.CONTENT_URI, value);
+                //Unknown URL content://com.meizu.flyme.notepaper.NotePaper/notefiles
+//                NoteEditActivity.this.getContentResolver().insert(NoteFiles.CONTENT_URI, value);
             }
         }).start();
     }
@@ -3386,10 +3300,10 @@ public class NoteEditActivity extends RecordActivityBase {
     //删除最后一个字符？？吗
     void deleteLastLineFeedChar(Editable edit) {
         if (edit != null) {
-                int length = edit.length();
-                if (length > 0 && edit.charAt(length - 1) == '\n') {
-                    edit.delete(length - 1, length);
-                }
+            int length = edit.length();
+            if (length > 0 && edit.charAt(length - 1) == '\n') {
+                edit.delete(length - 1, length);
+            }
         }
     }
 
@@ -3628,7 +3542,6 @@ public class NoteEditActivity extends RecordActivityBase {
         });
         menu.show();
     }
-
 
     //使用删除对话框
     private void onDeleteMenuClicked() {
@@ -3932,7 +3845,6 @@ public class NoteEditActivity extends RecordActivityBase {
         return export;
     }
 
-
     //导出为文本文件？？ 有严重问题，注释了
     void exportToText(String parent) {
 
@@ -3961,7 +3873,6 @@ public class NoteEditActivity extends RecordActivityBase {
         }
         return true;
     }
-
 
     void exportTo(int requestCode) {
         String dir;
@@ -4109,8 +4020,7 @@ public class NoteEditActivity extends RecordActivityBase {
                     //如果不是清单，也没有内容，就直接插在这个位置，将原来的笔记元素挤到后面
                     if (text.length() == 0 && type == 0) {
                         insertRecordingAtPos(position, false);
-                    }
-                    else {
+                    } else {
                         //插入下一个位置，并接一个空的文字元素
                         deleteLastLineFeedChar(text);
                         insertRecordingAtPos(position + 1, true);
@@ -4169,10 +4079,10 @@ public class NoteEditActivity extends RecordActivityBase {
             case R.id.photo:
                 if ((this.mRecordingLayoutView == null || !this.mRecordingLayoutView.isRecording()) && checkSdcardOK()) {
                     count = this.mEditParent.getChildCount();
-                    int picCount = REQUEST_CODE_PICK;
-                    for (index = REQUEST_CODE_PICK; index < count; index += REQUEST_CODE_EXPORT_TO_PIC) {
+                    int picCount = 0;
+                    for (index = 0; index < count; index += 1) {
                         if ("image".equals(this.mEditParent.getChildAt(index).getTag())) {
-                            picCount += REQUEST_CODE_EXPORT_TO_PIC;
+                            picCount += 1;
                             if (picCount >= 10) {
                                 Toast.makeText(this, R.string.image_limit_tip, REQUEST_CODE_PICK).show();
                                 return true;
@@ -4452,7 +4362,6 @@ public class NoteEditActivity extends RecordActivityBase {
         }
     }
 
-
     //打开软键盘
     public void onSoftInputShow() {
         if (!this.mSoftInputShown) {
@@ -4509,24 +4418,10 @@ public class NoteEditActivity extends RecordActivityBase {
         }
     }
 
-
-
     //是否是编辑模式下
     public boolean isEditMode() {
         return this.mSoftInputShown;
     }
-
-
-
-
-
-    //在指定position插入edit_textlist_item，根据state判断有三种模式
-
-
-    //在指定position插入edit_image的RichFrameLayout控件，并设置指定图片
-
-
-
 
     //要删除的文件列表
     public HashSet<String> getDeleteFilesList() {
@@ -4557,6 +4452,11 @@ public class NoteEditActivity extends RecordActivityBase {
         }
     }
 
+
+    //在指定position插入edit_textlist_item，根据state判断有三种模式
+
+
+    //在指定position插入edit_image的RichFrameLayout控件，并设置指定图片
 
     //？？？
     public RecordingLayout getRecording() {
@@ -4609,5 +4509,56 @@ public class NoteEditActivity extends RecordActivityBase {
             count = MAX_WORDS;
         }
         this.mCount = count;
+    }
+
+    class ListShadowBuilder extends DragShadowBuilder {
+        private int mBottomMargin;
+        private int mLineSpace;
+        private int mMargin;
+        private int mTopMargin;
+        private int mWidth;
+
+        public ListShadowBuilder(View view) {
+            super(view);
+            Resources resources = view.getContext().getResources();
+            this.mMargin = resources.getDimensionPixelSize(R.dimen.edit_item_dragshadow_space);
+            this.mLineSpace = resources.getDimensionPixelSize(R.dimen.edit_text_line_space);
+            this.mTopMargin = resources.getDimensionPixelSize(R.dimen.edit_note_edit_top_margin);
+            this.mBottomMargin = resources.getDimensionPixelSize(R.dimen.edit_text_bottom_margin);
+        }
+
+        public void onDrawShadow(Canvas canvas) {
+            View view = getView();
+            Drawable background = view.getContext().getResources().getDrawable(R.drawable.list_choosen_background);
+            background.setBounds(NoteEditActivity.REQUEST_CODE_PICK, NoteEditActivity.REQUEST_CODE_PICK, canvas.getWidth(), canvas.getHeight());
+            background.draw(canvas);
+            canvas.save();
+            canvas.translate(0.0f, (float) ((this.mMargin - view.getPaddingTop()) - this.mTopMargin));
+            super.onDrawShadow(canvas);
+            canvas.restore();
+        }
+
+        public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint) {
+            View view = getView();
+            if (view != null) {
+                shadowSize.set(view.getWidth(), (((((view.getHeight() - view.getPaddingTop()) - view.getPaddingBottom()) - this.mLineSpace) - this.mTopMargin) - this.mBottomMargin) + (this.mMargin * NoteEditActivity.REQUEST_CODE_EXPORT_TO_TEXT));
+                shadowTouchPoint.set(NoteEditActivity.REQUEST_CODE_PICK, 40);
+            }
+        }
+    }
+
+    //Tag信息类
+    class TagInfo {
+        long id;
+        String name;
+
+        public TagInfo(long tid, String tname) {
+            this.id = tid;
+            this.name = tname;
+        }
+
+        public String toString() {
+            return this.name;
+        }
     }
 }
