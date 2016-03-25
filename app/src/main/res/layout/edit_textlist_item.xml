@@ -8,7 +8,7 @@
     android:paddingRight="@dimen/edit_text_margin"
     android:tag="text">
 
-    <com.example.flyme.notepaper.widget.EditDragView
+    <com.example.leixiao.notepaper.widget.EditDragView
         android:id="@id/drag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
         android:src="@null"
         android:visibility="gone" />
 
-    <com.example.flyme.notepaper.widget.CheckImageView
+    <com.example.leixiao.notepaper.widget.CheckImageView
         android:id="@id/check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
         android:src="@null"
         android:visibility="gone" />
 
-    <com.example.flyme.notepaper.widget.NoteEditText
+    <com.example.leixiao.notepaper.widget.NoteEditText
         android:id="@id/text"
         android:layout_width="0.0dip"
         android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
         android:textColorHint="@color/common_grey_color"
         android:textSize="@dimen/edit_text_font_size" />
 
-    <com.example.flyme.notepaper.widget.DeleteImageView
+    <com.example.leixiao.notepaper.widget.DeleteImageView
         android:id="@id/delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

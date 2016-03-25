@@ -10,7 +10,7 @@
         android:layout_height="1.0px"
         android:background="#33000000" />
 
-    <com.example.flyme.notepaper.widget.FontPanelLinearLayout
+    <com.example.leixiao.notepaper.widget.FontPanelLinearLayout
         android:id="@id/font_panel"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/font_panel_height"
@@ -38,9 +38,9 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/font_button_margin"
             android:src="@drawable/ic_title_chararter_inc" />
-    </com.example.flyme.notepaper.widget.FontPanelLinearLayout>
+    </com.example.leixiao.notepaper.widget.FontPanelLinearLayout>
 
-    <com.example.flyme.notepaper.widget.HorizontalBackgoundView
+    <com.example.leixiao.notepaper.widget.HorizontalBackgoundView
         android:id="@id/scroll_parent"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/color_panel_height"

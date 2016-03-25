@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.example.flyme.notepaper.widget.RichFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.leixiao.notepaper.widget.RichFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:tag="record">
 
-    <com.example.flyme.notepaper.widget.RecordLinearLayout
+    <com.example.leixiao.notepaper.widget.RecordLinearLayout
         android:id="@id/recordLayout"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/edit_record_height"
@@ -71,7 +71,7 @@
             android:gravity="center"
             android:scaleType="centerInside"
             android:src="@drawable/btn_record_play" />
-    </com.example.flyme.notepaper.widget.RecordLinearLayout>
+    </com.example.leixiao.notepaper.widget.RecordLinearLayout>
 
     <EditText
         android:id="@id/edit"
@@ -81,4 +81,4 @@
         android:layout_marginBottom="0.0dip"
         android:background="@null"
         android:cursorVisible="false" />
-</com.example.flyme.notepaper.widget.RichFrameLayout>
+</com.example.leixiao.notepaper.widget.RichFrameLayout>
