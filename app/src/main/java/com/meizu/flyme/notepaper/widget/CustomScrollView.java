@@ -198,9 +198,6 @@ public class CustomScrollView extends ScrollView {
             }
             this.mEditParent.removeViewAt(oldPos);
             this.mEditParent.addView(v, position);
-            if (this.mRestoreSwitch) {
-                ((NoteEditActivity) getContext()).pushRestoreSwap(v, oldPos, position);
-            }
             ((NoteEditActivity) getContext()).setTextChanged();
         }
     }

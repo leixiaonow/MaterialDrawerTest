@@ -23,7 +23,7 @@ import com.example.leixiao.data.dao.impl.sqlite.NoteSQLiteDAO;
 import com.example.leixiao.data.source.sqlite.NotesDatabaseHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.meizu.flyme.notepaper.NoteEditActivity2;
+import com.meizu.flyme.notepaper.NoteEditActivity;
 import com.meizu.flyme.notepaper.database.NotePaper;
 import com.meizu.flyme.notepaper.utils.Constants;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         actionButton_ZhaoPian.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, NoteEditActivity2.class);
+                Intent intent = new Intent(MainActivity.this, NoteEditActivity.class);
                 intent.setData(NotePaper.Notes.CONTENT_URI);
                 intent.putExtra(Constants.JSON_KEY_TYPE, -1);
                 intent.putExtra("id", -1);
