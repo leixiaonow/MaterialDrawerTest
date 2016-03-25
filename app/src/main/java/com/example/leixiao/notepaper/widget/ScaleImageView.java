@@ -25,6 +25,9 @@ import com.example.leixiao.notepaper.utils.NoteUtil;
 import com.example.leixiao.notepaper.utils.ReflectUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 //有很大的问题，反编译不正确
 public class ScaleImageView extends ImageView {
@@ -127,7 +130,23 @@ public class ScaleImageView extends ImageView {
         this.mHeight = height;
     }
 
+    //最终设置图片的方法
     void setImageFile(String imageFileName) {
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(imageFileName);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        setImageDrawable(Drawable.createFromStream(fis, null));
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return;
+                }
 
     }
 

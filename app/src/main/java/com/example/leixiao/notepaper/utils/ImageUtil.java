@@ -11,12 +11,12 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
-import android.support.v7.appcompat.BuildConfig;
 import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -179,47 +179,39 @@ public class ImageUtil {
         return true;
     }
 
+    //我修改过的方法
     public static File getImageFile(Context context, Uri uri, String uuid) {
         if (uri == null) {
             return null;
         }
         File file = null;
+        //准备前缀
         String prefix = "img_" + NoteUtil.getTimeString();
-        int index = RESULT_SUCCESS;
-//        while (index < ActivityChooserViewAdapter.MAX_ACTIVITY_COUNT_UNLIMITED) {
-        while (index < 100) {//我改的
-            String indexStr;
-            if (index == 0) {
-                indexStr = BuildConfig.VERSION_NAME;
-            } else {
-                indexStr = "_" + String.valueOf(index);
-            }
-            file = NoteUtil.getFile(uuid, prefix + indexStr + ".jpg");
-            if (file.exists()) {
-                file = null;
-                index++;
-            } else if (file.getParentFile().exists()) {
+        //永远不会重复，应为时间作为参数
+        file = NoteUtil.getFile(uuid, prefix + ".jpg");
+
+        if (file.getParentFile().exists()) {//为什么返回,因为文件夹已建好，文件还没有建
+            Log.d(TAG, "getImageFile: else if");
+            return file;
+        } else {//新建笔记时，第一次加图片会进入else，来建立文件夹
+            Log.d(TAG, "getImageFile: else");
+            File pDataDir = new File(NoteUtil.FILES_ANDROID_DATA);
+            if (pDataDir == null || !pDataDir.exists()) {
+                Log.d(TAG, "Android data dir not exist.");
+                return null;
+            } else if (file.getParentFile().mkdirs()) {
                 return file;
             } else {
-                File pDataDir = new File(NoteUtil.FILES_ANDROID_DATA);
-                if (pDataDir == null || !pDataDir.exists()) {
-                    Log.d(TAG, "Android data dir not exist.");
-                    return null;
-                } else if (file.getParentFile().mkdirs()) {
-                    return file;
-                } else {
-                    Log.d(TAG, "mkdirs fail: " + file.getParentFile().getPath());
-                    return null;
-                }
+                Log.d(TAG, "mkdirs fail: " + file.getParentFile().getPath());
+                return null;
             }
         }
-        return file;
     }
 
-    //严重问题注释了
-    public static int saveIntoFile(Context context, Uri uri, File file) {
- /*       Exception e;
-        Throwable th;
+
+    //我修改的方法
+    public static int saveIntoFile(Context context, Uri uri, File file) throws IOException {
+
         if (file == null || uri == null) {
             return RESULT_SUCCESS;
         }
@@ -228,139 +220,19 @@ public class ImageUtil {
             return RESULT_FILE_NOT_AVAILABLE;
         }
         MemoByteArrayOutputStream baos = new MemoByteArrayOutputStream();
-        bmp.compress(CompressFormat.JPEG, 75, baos);
-        FileOutputStream os = null;
-        try {
-            FileOutputStream os2 = new FileOutputStream(file);
-            try {
-                baos.writeTo(os2);
-                if (os2 != null) {
-                    try {
-                        os2.close();
-                    } catch (IOException e2) {
-                        e2.printStackTrace();
-                    }
-                }
-                if (baos != null) {
-                    try {
-                        baos.close();
-                    } catch (IOException e22) {
-                        e22.printStackTrace();
-                    }
-                }
-                if (bmp == null) {
-                    return RESULT_SUCCESS;
-                }
-                bmp.recycle();
-                return RESULT_SUCCESS;
-            } catch (Exception e3) {
-                e = e3;
-                os = os2;
-                try {
-                    e.printStackTrace();
-                    if (checkSdcardAvailableSpace((long) baos.getByteArrayCount())) {
-                        if (os != null) {
-                            try {
-                                os.close();
-                            } catch (IOException e222) {
-                                e222.printStackTrace();
-                            }
-                        }
-                        if (baos != null) {
-                            try {
-                                baos.close();
-                            } catch (IOException e2222) {
-                                e2222.printStackTrace();
-                            }
-                        }
-                        if (bmp != null) {
-                            return RESULT_SAVE_FAILURE;
-                        }
-                        bmp.recycle();
-                        return RESULT_SAVE_FAILURE;
-                    }
-                    if (os != null) {
-                        try {
-                            os.close();
-                        } catch (IOException e22222) {
-                            e22222.printStackTrace();
-                        }
-                    }
-                    if (baos != null) {
-                        try {
-                            baos.close();
-                        } catch (Exception e4) {
-                            e4.printStackTrace();
-                        }
-                    }
-                    if (bmp != null) {
-                        return RESULT_SPACE_NOT_ENOUGH;
-                    }
-                    bmp.recycle();
-                    return RESULT_SPACE_NOT_ENOUGH;
-                } catch (Throwable th2) {
-                    th = th2;
-                    if (os != null) {
-                        try {
-                            os.close();
-                        } catch (IOException e222222) {
-                            e222222.printStackTrace();
-                        }
-                    }
-                    if (baos != null) {
-                        try {
-                            baos.close();
-                        } catch (IOException e2222222) {
-                            e2222222.printStackTrace();
-                        }
-                    }
-                    if (bmp != null) {
-                        bmp.recycle();
-                    }
-                    throw th;
-                }
-            } catch (Throwable th3) {
-                th = th3;
-                os = os2;
-                if (os != null) {
-                    os.close();
-                }
-                if (baos != null) {
-                    baos.close();
-                }
-                if (bmp != null) {
-                    bmp.recycle();
-                }
-                throw th;
-            }
-        } catch (Exception e5) {
-            e4 = e5;
-            e4.printStackTrace();
-            if (checkSdcardAvailableSpace((long) baos.getByteArrayCount())) {
-                if (os != null) {
-                    os.close();
-                }
-                if (baos != null) {
-                    baos.close();
-                }
-                if (bmp != null) {
-                    return RESULT_SPACE_NOT_ENOUGH;
-                }
-                bmp.recycle();
-                return RESULT_SPACE_NOT_ENOUGH;
-            }
-            if (os != null) {
-                os.close();
-            }
-            if (baos != null) {
-                baos.close();
-            }
-            if (bmp != null) {
-                return RESULT_SAVE_FAILURE;
-            }
-            bmp.recycle();
-            return RESULT_SAVE_FAILURE;
-        }*/
+        bmp.compress(Bitmap.CompressFormat.JPEG, 75, baos);
+        FileOutputStream os = new FileOutputStream(file);
+        baos.writeTo(os);
+        if (os != null) {
+            os.close();
+        }
+        if (baos != null) {
+            baos.close();
+        }
+        if (bmp == null) {
+            return 0;
+        }
+        bmp.recycle();
         return 0;
     }
 

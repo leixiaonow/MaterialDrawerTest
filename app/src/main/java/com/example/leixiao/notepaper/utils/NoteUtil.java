@@ -6,6 +6,7 @@ import android.support.v7.appcompat.BuildConfig;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.format.Time;
+import android.util.Log;
 
 import com.example.leixiao.notepaper.Config;
 import com.example.leixiao.notepaper.database.NotePaper;
@@ -78,10 +79,13 @@ public class NoteUtil {
     }
 
     public static File getFile(String uuid, String name) {
+        Log.d(TAG, "getFileName: files_dir:"+FILES_DIR);
+        Log.d(TAG, "getFileName: path:"+new File(FILES_DIR, uuid + RECORD_DIV + name).getPath());
         return new File(FILES_DIR, uuid + RECORD_DIV + name);
     }
 
     public static String getFileName(String uuid, String name) {
+
         return new File(FILES_DIR, uuid + RECORD_DIV + name).getPath();
     }
 

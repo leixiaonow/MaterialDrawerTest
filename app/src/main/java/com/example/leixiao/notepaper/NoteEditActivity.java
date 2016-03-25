@@ -107,6 +107,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -706,13 +707,19 @@ public class NoteEditActivity extends RecordActivityBase {
                         Parcelable uri = (Parcelable) i$.next();
                         File file = ImageUtil.getImageFile(NoteEditActivity.this, (Uri) uri, NoteEditActivity.this.mEditNote.mUUId);
                         if (file != null) {
-                            final int save_result = ImageUtil.saveIntoFile(NoteEditActivity.this, (Uri) uri, file);
+                            int save_result = 0;
+                            try {
+                                save_result = ImageUtil.saveIntoFile(NoteEditActivity.this, (Uri) uri, file);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                             if (save_result != 0) {
                                 if (result == 0) {
                                     result = save_result;
+                                    final int finalSave_result = save_result;
                                     NoteEditActivity.this.mHandler.post(new Runnable() {
                                         public void run() {
-                                            NoteEditActivity.this.showErrorTip(save_result);
+                                            NoteEditActivity.this.showErrorTip(finalSave_result);
                                         }
                                     });
                                 }
@@ -3067,30 +3074,39 @@ public class NoteEditActivity extends RecordActivityBase {
 
     //把图片保存到文件夹中
     String addImage(Context context, Uri uri, String uuid) {
+        //调用ImageUtil.getImageFile
         File file = ImageUtil.getImageFile(context, uri, uuid);
         if (file == null && !checkSdcardOK()) {
             return null;
         }
+        //选择的图片所在的位置
         String path = uri.getPath();
         Log.d(TAG, "addImage: path" + path);
-        if (path == null || !path.equals(TempFileProvider.getScrapPath(context))) {
-            int result = ImageUtil.saveIntoFile(context, uri, file);
-            Log.d(TAG, "addImage: result:" + result);
+        if (path != null) {
+            //将图片从原来的位置保存到新建的位置
 
+            int result = 0;
+            try {
+                result = ImageUtil.saveIntoFile(context, uri, file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Log.d(TAG, "addImage: result:" + result);
+            //保存成功，返回新文件名
             if (result == 0) {
                 Log.d(TAG, "addImage: file.getName();" + file.getName());
                 return file.getName();
             }
-            showErrorTip(result);
-            return null;
+            else return null;
         }
-        Log.d(TAG, "addImage: path != null 或 !path.equals(TempFileProvider.getScrapPath(context)");
-        File cameraFile = new File(path);
-        if (cameraFile.renameTo(file)) {
-            Log.d(TAG, "addImage: file.getName();" + file.getName());
-            return file.getName();
-        }
-        Log.d(TAG, "renameTo fail: from " + cameraFile.getPath() + " to :" + file.getPath());
+//        Log.d(TAG, "addImage: path != null 或 !path.equals(TempFileProvider.getScrapPath(context)");
+//        File cameraFile = new File(path);
+//        if (cameraFile.renameTo(file)) {
+//            Log.d(TAG, "addImage: file.getName();" + file.getName());
+//            return file.getName();
+//        }
+//        Log.d(TAG, "renameTo fail: from " + cameraFile.getPath() + " to :" + file.getPath());
         return null;
     }
 
@@ -3099,9 +3115,11 @@ public class NoteEditActivity extends RecordActivityBase {
         if (this.mPauseState == REQUEST_CODE_EXPORT_TO_TEXT) {
             this.mPauseState = REQUEST_CODE_LOGIN;
         }
+
         if (requestCode == 0) {
             Log.d(TAG, "onActivityResult: requestCode==0");
             View view = findFocusView();
+            //如果焦点View为空，或titleView获得焦点，设置titleView为这里的View
             if (view == null && this.mTitleView.hasFocus()) {
                 view = this.mTitleView;
             }
@@ -3113,15 +3131,19 @@ public class NoteEditActivity extends RecordActivityBase {
                 showSoftInput(view);
             }
         }
+
         if (resultCode == -1) {
             Log.d(TAG, "onActivityResult: resultCode==-1");
             Uri uri = null;
+
             switch (requestCode) {
+                //加载图片的情况
                 case REQUEST_CODE_PICK /*0*/:
                     Log.d(TAG, "onActivityResult: requestCode=0");
                     if (data != null) {
                         uri = data.getData();
                         Log.d(TAG, "onActivityResult: " + uri);
+                        //从相册加载图片不满足下面的条件
                         if (uri != null && uri.getAuthority().equals(TempFileProvider.AUTHORITY)) {
                             Log.d(TAG, "onActivityResult: equals(TempFileProvider.AUTHORITY)");
                             uri = Uri.fromFile(TempFileProvider.getScrapPath(this));
@@ -3135,10 +3157,13 @@ public class NoteEditActivity extends RecordActivityBase {
                             }
                         }
                     }
+                    //不论怎么获得图片都要执行这里，根据uri执行一些操作
                     if (uri != null) {
                         Log.d(TAG, "onActivityResult: uri!=null");
+                        //保存图片到引用文件夹
                         String picName = addImage(this, uri, this.mEditNote.mUUId);
                         if (picName != null) {
+                            //插入图片元素到笔记上
                             insertImage(picName);
                             break;
                         }
@@ -3333,7 +3358,7 @@ public class NoteEditActivity extends RecordActivityBase {
                 insertPictureAtPos(picName, position, false);
             } else if (end == length) {
                 deleteLastLineFeedChar(sb);
-                insertPictureAtPos(picName, position + REQUEST_CODE_EXPORT_TO_PIC, true);
+                insertPictureAtPos(picName, position + 1, true);
             } else {
                 int newstart = end;
                 if (sb.charAt(end) == '\n') {
@@ -3375,7 +3400,7 @@ public class NoteEditActivity extends RecordActivityBase {
 
             }
         } else if (this.mTitleView.hasFocus()) {
-            insertPictureAtPos(picName, REQUEST_CODE_PICK, false);
+            insertPictureAtPos(picName, 0, false);
         } else if (view == null || !(view instanceof RichFrameLayout)) {
             int childCount = this.mEditParent.getChildCount();
             if (childCount > 0) {
@@ -3389,14 +3414,14 @@ public class NoteEditActivity extends RecordActivityBase {
                         insertPictureAtPos(picName, position, false);
                     } else {
                         deleteLastLineFeedChar(text);
-                        insertPictureAtPos(picName, position + REQUEST_CODE_EXPORT_TO_PIC, true);
+                        insertPictureAtPos(picName, position + 1, true);
                     }
                 } else {
-                    insertPictureAtPos(picName, position + REQUEST_CODE_EXPORT_TO_PIC, true);
+                    insertPictureAtPos(picName, position + 1, true);
                 }
             }
         } else {
-            insertPictureAtPos(picName, getChildPosition(view) + REQUEST_CODE_EXPORT_TO_PIC, false);
+            insertPictureAtPos(picName, getChildPosition(view) + 1, false);
         }
         setFirstHint();
         this.mChanged |= CHANGE_CONTENT;
