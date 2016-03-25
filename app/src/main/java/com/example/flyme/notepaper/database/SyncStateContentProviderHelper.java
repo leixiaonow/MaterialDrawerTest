@@ -9,14 +9,27 @@ import android.database.sqlite.SQLiteDatabase;
 import com.example.flyme.notepaper.database.NotePaper.AccountConstract;
 
 public class SyncStateContentProviderHelper {
-    private static final String[] ACCOUNT_PROJECTION = new String[]{AccountConstract.ACCOUNT_NMAE, "account_type"};
-    private static long DB_VERSION = 1;
     public static final String PATH = "syncstate";
+    private static final String[] ACCOUNT_PROJECTION = new String[]{AccountConstract.ACCOUNT_NMAE, "account_type"};
     private static final String QUERY_COUNT_SYNC_STATE_ROWS = "SELECT count(*) FROM _sync_state WHERE _id=?";
     private static final String SELECT_BY_ACCOUNT = "account_name=? AND account_type=?";
     private static final String SYNC_STATE_META_TABLE = "_sync_state_metadata";
     private static final String SYNC_STATE_META_VERSION_COLUMN = "version";
     private static final String SYNC_STATE_TABLE = "_sync_state";
+    private static long DB_VERSION = 1;
+
+    private static <T> boolean contains(T[] array, T value) {
+        for (T element : array) {
+            if (element == null) {
+                if (value == null) {
+                    return true;
+                }
+            } else if (value != null && element.equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void createDatabase(SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS _sync_state");
@@ -63,24 +76,11 @@ public class SyncStateContentProviderHelper {
         while (c.moveToNext()) {
             try {
                 if (!contains(accounts, new Account(c.getString(0), c.getString(1)))) {
-             //       db.delete(SYNC_STATE_TABLE, SELECT_BY_ACCOUNT, new String[]{accountName, accountType});
+                    //       db.delete(SYNC_STATE_TABLE, SELECT_BY_ACCOUNT, new String[]{accountName, accountType});
                 }
             } finally {
                 c.close();
             }
         }
-    }
-
-    private static <T> boolean contains(T[] array, T value) {
-        for (T element : array) {
-            if (element == null) {
-                if (value == null) {
-                    return true;
-                }
-            } else if (value != null && element.equals(value)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

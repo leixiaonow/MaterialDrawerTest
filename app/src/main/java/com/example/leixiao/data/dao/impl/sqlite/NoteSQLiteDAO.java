@@ -6,13 +6,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.util.Log;
+
 import com.example.leixiao.data.Note;
 import com.example.leixiao.data.dao.NoteDAO;
+
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
- *实现数据访问接口，从这里增删盖数据
+ * 实现数据访问接口，从这里增删盖数据
  */
 public class NoteSQLiteDAO implements NoteDAO {
 
@@ -24,7 +26,7 @@ public class NoteSQLiteDAO implements NoteDAO {
     /**
      *
      */
-    public NoteSQLiteDAO( SQLiteOpenHelper databaseHelper) {
+    public NoteSQLiteDAO(SQLiteOpenHelper databaseHelper) {
         this.databaseHelper = databaseHelper;
     }
 
@@ -118,8 +120,8 @@ public class NoteSQLiteDAO implements NoteDAO {
     /**
      * Borra una nota de la tabla {@link NoteEntry#TABLE_NAME}.
      *
-     * @see <a href="http://bit.ly/1syEh1A">Delete Information from a Database</a>
      * @param note la nota a borrar.
+     * @see <a href="http://bit.ly/1syEh1A">Delete Information from a Database</a>
      */
     @Override
     public void delete(Note note) {

@@ -30,32 +30,24 @@ public class RecordLinearLayout extends LinearLayout implements OnCompletionList
     public static final int PLAYING = 1;
     public static final int PLAYPAUSE = 2;
     final String TAG = "RecordLinearLayout";
-    private ImageButton mDeleteBtn;
-    boolean mFromTouch = false;
     final Handler mHandler = new Handler();
+    public int mPlayingState;
+    boolean mFromTouch = false;
+    String mRecordFileName;
+    String mUUID;
+    private ImageButton mDeleteBtn;
     private TextView mPassView;
     private ImageButton mPauseBtn;
     private MediaPlayer mPlayer;
-    public int mPlayingState;
-    String mRecordFileName;
     private RecordPlayManager mRecordPlayManager;
     private SeekBar mSeekBar;
     private long mTotalTime = 0;
     private TextView mTotalView;
-    String mUUID;
     Runnable mUpdateTimer = new Runnable() {
         public void run() {
             RecordLinearLayout.this.updateProgress();
         }
     };
-
-    public interface RecordPlayManager {
-        void pausePlay(RecordLinearLayout recordLinearLayout);
-
-        void startPlay(RecordLinearLayout recordLinearLayout);
-
-        void stopPlay(RecordLinearLayout recordLinearLayout);
-    }
 
     public RecordLinearLayout(Context context) {
         super(context);
@@ -292,5 +284,13 @@ public class RecordLinearLayout extends LinearLayout implements OnCompletionList
         if (view instanceof RichFrameLayout) {
             ((RichFrameLayout) view).onFocus();
         }
+    }
+
+    public interface RecordPlayManager {
+        void pausePlay(RecordLinearLayout recordLinearLayout);
+
+        void startPlay(RecordLinearLayout recordLinearLayout);
+
+        void stopPlay(RecordLinearLayout recordLinearLayout);
     }
 }

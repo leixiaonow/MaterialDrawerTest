@@ -9,10 +9,6 @@ import android.widget.EditText;
 public class EditTextCloud extends EditText {
     private OnKeyPreImeListener mOnKeyPreImeListener;
 
-    public interface OnKeyPreImeListener {
-        boolean onKeyPreIme(View view, int i, KeyEvent keyEvent);
-    }
-
     public EditTextCloud(Context context) {
         super(context);
     }
@@ -35,5 +31,9 @@ public class EditTextCloud extends EditText {
 
     public void setOnKeyPreImeListener(OnKeyPreImeListener l) {
         this.mOnKeyPreImeListener = l;
+    }
+
+    public interface OnKeyPreImeListener {
+        boolean onKeyPreIme(View view, int i, KeyEvent keyEvent);
     }
 }

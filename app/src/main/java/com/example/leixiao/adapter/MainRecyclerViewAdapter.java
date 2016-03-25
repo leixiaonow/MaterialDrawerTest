@@ -23,34 +23,26 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolder> 
 
     Context context;
     ArrayList<Note> notes;
-
-    public MainRecyclerViewAdapter(Context context,ArrayList<Note> notes){
-
-        this.context=context;
-        this.notes=notes;
-
-    }
-
-    public interface OnItemClickLitener
-    {
-        void onItemClick(View view, int position);//实现接口的方法中实现了对要操作的数据的引用
-        void onItemLongClick(View view , int position);
-    }
-
     private OnItemClickLitener mOnItemClickLitener;
+
+    public MainRecyclerViewAdapter(Context context, ArrayList<Note> notes) {
+
+        this.context = context;
+        this.notes = notes;
+
+    }
 
     //在MainActivity中调用这个方法，传入一个自己写的OnItemClickLitener接口的实现对象
     //保存到mOnItemClickLitener中
-    public void setOnItemClickLitener(OnItemClickLitener mOnItemClickLitener)
-    {
+    public void setOnItemClickLitener(OnItemClickLitener mOnItemClickLitener) {
         this.mOnItemClickLitener = mOnItemClickLitener;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         MyViewHolder holder = new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.notes_row, parent, false));
-    return holder;
-}
+        return holder;
+    }
 
     //根据position加载数据，并设置传入的ViewHolder中各种从item布局加载的View的属性
     @Override
@@ -62,8 +54,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolder> 
         holder.getNoteDateText().setText(DATETIME_FORMAT.format(note.getUpdatedAt()));
         if (note.getSelected()) {
             holder.getCardView().setCardBackgroundColor(Color.GREEN);
-        }
-        else {
+        } else {
             holder.getCardView().setCardBackgroundColor(Color.WHITE);
         }
 
@@ -92,6 +83,12 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolder> 
     @Override
     public int getItemCount() {
         return notes.size();
+    }
+
+    public interface OnItemClickLitener {
+        void onItemClick(View view, int position);//实现接口的方法中实现了对要操作的数据的引用
+
+        void onItemLongClick(View view, int position);
     }
 
 

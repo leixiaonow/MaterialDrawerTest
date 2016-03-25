@@ -32,28 +32,15 @@ public class RecordingLayout extends RelativeLayout {
     private static final int STATE_RECORDING = 1;
     private static final int STATE_STOP = 0;
     final String TAG = "RecordingLayout";
+    final Handler mRecordHandler = new Handler();
     ImageView mAnimView;
     TextView mDigitTimer;
-    OnErrorListener mErrorListener = new OnErrorListener() {
-        public void onError(MediaRecorder mr, int what, int extra) {
-            Log.d(toString(), "record error: what " + what + " extra: " + extra);
-            RecordingLayout.this.mRecordHandler.removeCallbacks(RecordingLayout.this.mUpdateRecordTimer);
-            RecordingLayout.this.stopRecording(true);
-        }
-    };
     MediaRecorder mMediaRecorder = null;
     ImageView mPauseBtn;
-    final Handler mRecordHandler = new Handler();
     String mRecordName;
     int mRecordState = 0;
     File mRecordingFile;
     ImageView mStopBtn;
-    Runnable mStopRecord = new Runnable() {
-        public void run() {
-            RecordingLayout.this.mRecordHandler.removeCallbacks(RecordingLayout.this.mUpdateRecordTimer);
-            RecordingLayout.this.stopRecording(true);
-        }
-    };
     String mUUID;
     Runnable mUpdateRecordDisplay = new Runnable() {
         public void run() {
@@ -73,6 +60,19 @@ public class RecordingLayout extends RelativeLayout {
                 }
                 drawable.setLevel(level);
             }
+        }
+    };
+    Runnable mStopRecord = new Runnable() {
+        public void run() {
+            RecordingLayout.this.mRecordHandler.removeCallbacks(RecordingLayout.this.mUpdateRecordTimer);
+            RecordingLayout.this.stopRecording(true);
+        }
+    };
+    OnErrorListener mErrorListener = new OnErrorListener() {
+        public void onError(MediaRecorder mr, int what, int extra) {
+            Log.d(toString(), "record error: what " + what + " extra: " + extra);
+            RecordingLayout.this.mRecordHandler.removeCallbacks(RecordingLayout.this.mUpdateRecordTimer);
+            RecordingLayout.this.stopRecording(true);
         }
     };
 

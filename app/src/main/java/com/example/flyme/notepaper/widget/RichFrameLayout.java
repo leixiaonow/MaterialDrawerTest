@@ -17,6 +17,9 @@ import com.example.leixiao.materialdrawertest.R;
 
 
 public class RichFrameLayout extends LinearLayout {
+    String mFileName;
+    EditText mFocusEdit;
+    String mUUID;
     //按键监听，当按键是0或是27的时候删除自己
     OnKeyListener mEditKeyPreListener = new OnKeyListener() {
         @Override
@@ -28,9 +31,6 @@ public class RichFrameLayout extends LinearLayout {
             return true;
         }
     };
-    String mFileName;
-    EditText mFocusEdit;
-    String mUUID;
 
 
     public RichFrameLayout(Context context) {

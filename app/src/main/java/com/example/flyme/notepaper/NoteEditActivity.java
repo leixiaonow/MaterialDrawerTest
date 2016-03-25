@@ -75,6 +75,8 @@ import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.example.flyme.notepaper.database.NotePaper;
+import com.example.flyme.notepaper.database.NotePaper.NoteFiles;
+import com.example.flyme.notepaper.database.NotePaper.Notes;
 import com.example.flyme.notepaper.utils.Constants;
 import com.example.flyme.notepaper.utils.EnvironmentUtils;
 import com.example.flyme.notepaper.utils.HanziToPinyin;
@@ -93,14 +95,12 @@ import com.example.flyme.notepaper.widget.HorizontalBackgoundView;
 import com.example.flyme.notepaper.widget.ListDragLocalState;
 import com.example.flyme.notepaper.widget.NoteEditText;
 import com.example.flyme.notepaper.widget.PopupPaperWindow;
+import com.example.flyme.notepaper.widget.PopupPaperWindow.OnPopupStateChangeListener;
 import com.example.flyme.notepaper.widget.RecordLinearLayout;
 import com.example.flyme.notepaper.widget.RecordingLayout;
 import com.example.flyme.notepaper.widget.RichFrameLayout;
 import com.example.flyme.notepaper.widget.ScaleImageView;
 import com.example.leixiao.materialdrawertest.R;
-import com.example.flyme.notepaper.database.NotePaper.NoteFiles;
-import com.example.flyme.notepaper.database.NotePaper.Notes;
-import com.example.flyme.notepaper.widget.PopupPaperWindow.OnPopupStateChangeListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -3072,13 +3072,13 @@ public class NoteEditActivity extends RecordActivityBase {
             return null;
         }
         String path = uri.getPath();
-        Log.d(TAG, "addImage: path"+path);
+        Log.d(TAG, "addImage: path" + path);
         if (path == null || !path.equals(TempFileProvider.getScrapPath(context))) {
             int result = ImageUtil.saveIntoFile(context, uri, file);
-            Log.d(TAG, "addImage: result:"+result);
+            Log.d(TAG, "addImage: result:" + result);
 
             if (result == 0) {
-                Log.d(TAG, "addImage: file.getName();"+file.getName());
+                Log.d(TAG, "addImage: file.getName();" + file.getName());
                 return file.getName();
             }
             showErrorTip(result);
@@ -3087,7 +3087,7 @@ public class NoteEditActivity extends RecordActivityBase {
         Log.d(TAG, "addImage: path != null 或 !path.equals(TempFileProvider.getScrapPath(context)");
         File cameraFile = new File(path);
         if (cameraFile.renameTo(file)) {
-            Log.d(TAG, "addImage: file.getName();"+file.getName());
+            Log.d(TAG, "addImage: file.getName();" + file.getName());
             return file.getName();
         }
         Log.d(TAG, "renameTo fail: from " + cameraFile.getPath() + " to :" + file.getPath());
@@ -3121,11 +3121,11 @@ public class NoteEditActivity extends RecordActivityBase {
                     Log.d(TAG, "onActivityResult: requestCode=0");
                     if (data != null) {
                         uri = data.getData();
-                        Log.d(TAG, "onActivityResult: "+uri);
+                        Log.d(TAG, "onActivityResult: " + uri);
                         if (uri != null && uri.getAuthority().equals(TempFileProvider.AUTHORITY)) {
                             Log.d(TAG, "onActivityResult: equals(TempFileProvider.AUTHORITY)");
                             uri = Uri.fromFile(TempFileProvider.getScrapPath(this));
-                            Log.d(TAG, "onActivityResult: Uri.fromFile"+uri);
+                            Log.d(TAG, "onActivityResult: Uri.fromFile" + uri);
                         } else if (uri.getScheme().equals("file")) {
                             Log.d(TAG, "onActivityResult: equals(\"file\")");
                             String path = uri.getPath();

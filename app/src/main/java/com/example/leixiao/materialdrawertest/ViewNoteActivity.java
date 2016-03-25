@@ -50,14 +50,14 @@ public class ViewNoteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_note);
-        scrollView=(ScrollView)findViewById(R.id.scroll_view);
-        editNoteButton=(FloatingActionButton)findViewById(R.id.edit_note_button);
+        scrollView = (ScrollView) findViewById(R.id.scroll_view);
+        editNoteButton = (FloatingActionButton) findViewById(R.id.edit_note_button);
 
-        noteTitleText=(TextView)findViewById(R.id.note_title);
-        noteContentText=(TextView)findViewById(R.id.note_content);
-        noteCreatedAtDateText=(TextView)findViewById(R.id.note_created_at_date);
-        noteUpdatedAtDateText=(TextView)findViewById(R.id.note_updated_at_date);
-        toolbar=(Toolbar)findViewById(R.id.toolbar);
+        noteTitleText = (TextView) findViewById(R.id.note_title);
+        noteContentText = (TextView) findViewById(R.id.note_content);
+        noteCreatedAtDateText = (TextView) findViewById(R.id.note_created_at_date);
+        noteUpdatedAtDateText = (TextView) findViewById(R.id.note_updated_at_date);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("查看");
         setSupportActionBar(toolbar);
 
@@ -81,7 +81,8 @@ public class ViewNoteActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed(); // Cerrar esta actividad
                 return true;
-            default: return super.onOptionsItemSelected(item);
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

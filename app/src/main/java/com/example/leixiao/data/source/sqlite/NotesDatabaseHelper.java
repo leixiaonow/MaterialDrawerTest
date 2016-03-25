@@ -30,17 +30,17 @@ public class NotesDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-            Log.v(TAG, "Creating database version " + DATABASE_VERSION + "...");
-            InputStream fileStream = null;
-            try {
-                // 从 SQL 文件中解析出sql语句
-                fileStream = context.getAssets().open(String.format(DATABASE_SCHEMA_FILE_NAME_PATTERN, DATABASE_VERSION));
-                String[] statements = SQLFileParser.getSQLStatements(fileStream);
-                // 依次执行所有sql语句，创建表
-                for (String statement : statements) {
-                    Log.v(TAG, statement);
-                    db.execSQL(statement);
-                }
+        Log.v(TAG, "Creating database version " + DATABASE_VERSION + "...");
+        InputStream fileStream = null;
+        try {
+            // 从 SQL 文件中解析出sql语句
+            fileStream = context.getAssets().open(String.format(DATABASE_SCHEMA_FILE_NAME_PATTERN, DATABASE_VERSION));
+            String[] statements = SQLFileParser.getSQLStatements(fileStream);
+            // 依次执行所有sql语句，创建表
+            for (String statement : statements) {
+                Log.v(TAG, statement);
+                db.execSQL(statement);
+            }
         } catch (IOException ex) {
             Log.e(TAG, "Unable to open schema file", ex);
         } finally {

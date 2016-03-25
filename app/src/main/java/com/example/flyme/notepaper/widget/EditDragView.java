@@ -21,16 +21,6 @@ public class EditDragView extends ImageView {
     LongPressedRunnable mPendingLongPress;
     int mTouchSlopSquare;
 
-    class LongPressedRunnable implements Runnable {
-        LongPressedRunnable() {
-        }
-
-        public void run() {
-            ((NoteEditActivity) EditDragView.this.getContext()).onDragList(EditDragView.this);
-            EditDragView.this.mBeginDrag = true;
-        }
-    }
-
     public EditDragView(Context context) {
         super(context);
     }
@@ -122,6 +112,16 @@ public class EditDragView extends ImageView {
                 return;
             default:
                 return;
+        }
+    }
+
+    class LongPressedRunnable implements Runnable {
+        LongPressedRunnable() {
+        }
+
+        public void run() {
+            ((NoteEditActivity) EditDragView.this.getContext()).onDragList(EditDragView.this);
+            EditDragView.this.mBeginDrag = true;
         }
     }
 }

@@ -20,10 +20,8 @@ import java.util.Date;
  *
  */
 public class EditNoteActivity extends AppCompatActivity {
-    String TAG="editnote";
-
     private static final String EXTRA_NOTE = "EXTRA_NOTE";
-
+    String TAG = "editnote";
     private EditText noteTitleText;
     private EditText noteContentText;
 
@@ -51,10 +49,10 @@ public class EditNoteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_note);
-        noteTitleText=(EditText)findViewById(R.id.note_title);
-        noteContentText=(EditText)findViewById(R.id.note_content);
+        noteTitleText = (EditText) findViewById(R.id.note_title);
+        noteContentText = (EditText) findViewById(R.id.note_content);
 
-        toolbar=(Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_back);
         toolbar.setTitle("编辑");
@@ -89,7 +87,8 @@ public class EditNoteActivity extends AppCompatActivity {
             message = new StringBuilder().append(getString(R.string.title_required));
         }
         if (Strings.isNullOrBlank(noteContentText.getText().toString())) {
-            if (message == null) message = new StringBuilder().append(getString(R.string.content_required));
+            if (message == null)
+                message = new StringBuilder().append(getString(R.string.content_required));
             else message.append("\n").append(getString(R.string.content_required));
         }
         if (message != null) {
@@ -125,11 +124,10 @@ public class EditNoteActivity extends AppCompatActivity {
                     finish();
                 } else validateNoteForm();
                 return true;
-            default: return false;
+            default:
+                return false;
         }
     }
-
-
 
 
 }

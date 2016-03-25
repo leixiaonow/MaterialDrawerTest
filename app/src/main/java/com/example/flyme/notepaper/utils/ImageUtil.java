@@ -31,112 +31,6 @@ public class ImageUtil {
     static final String TAG = "ImageUtil";
     static Config config = Config.ARGB_8888;
 
-    public static class NoteImageGetter {
-        Context mContext;
-        int mWidth;
-
-        public NoteImageGetter(Context context, int width) {
-            this.mWidth = width;
-            this.mContext = context;
-        }
-
-        public BitmapDrawable getDrawable(String source) {
-            BitmapDrawable drawable = createFromPath(source);
-            if (drawable != null) {
-                drawable.setBounds(ImageUtil.RESULT_SUCCESS, ImageUtil.RESULT_SUCCESS, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-            }
-            return drawable;
-        }
-
-        public BitmapDrawable createFromPath(String pathName) {
-            Options options;
-            if (pathName == null) {
-                return null;
-            }
-            File image = new File(pathName);
-            if (!image.exists()) {
-                return null;
-            }
-            Bitmap bm = null;
-            try {
-                Options opts;
-                Options opts1 = new Options();
-                try {
-                    opts1.inJustDecodeBounds = true;
-                    BitmapFactory.decodeFile(image.toString(), opts1);
-                    opts = new Options();
-                } catch (Exception e) {
-                    options = opts1;
-                    if (bm != null) {
-                        return null;
-                    }
-                    bm.recycle();
-                    return null;
-                }
-                try {
-                    opts.inSampleSize = opts1.outWidth / this.mWidth;
-                    opts.inPreferredConfig = ImageUtil.config;
-                    opts.inJustDecodeBounds = false;
-                    opts.inInputShareable = true;
-                    opts.inPurgeable = true;
-                    bm = BitmapFactory.decodeFile(image.toString(), opts);
-                    Bitmap pic = bm;
-                    if (!(bm == null || pic == bm)) {
-                        bm.recycle();
-                    }
-                    if (pic != null) {
-                        return new BitmapDrawable(this.mContext.getResources(), pic);
-                    }
-                    return null;
-                } catch (Exception e2) {
-                    options = opts1;
-                    Options options2 = opts;
-                    if (bm != null) {
-                        return null;
-                    }
-                    bm.recycle();
-                    return null;
-                }
-            } catch (Exception e3) {
-                if (bm != null) {
-                    return null;
-                }
-                bm.recycle();
-                return null;
-            }
-        }
-    }
-
-    public static class WidgetImageGetter {
-        public Bitmap getBitmap(Context context, Uri uri, int maxWidth, int maxHeight) {
-            Bitmap bmp = ImageUtil.decodeImageToBitmap(context, uri);
-            if (bmp == null) {
-                return null;
-            }
-            int originWidth = bmp.getWidth();
-            int width = originWidth;
-            int height = bmp.getHeight();
-            Bitmap ret = bmp;
-            if (width != maxWidth) {
-                width = maxWidth;
-                height = (int) Math.floor(((double) height) / ((double) ((((float) originWidth) * DefaultRetryPolicy.DEFAULT_BACKOFF_MULT) / ((float) width))));
-                Bitmap pic = Bitmap.createScaledBitmap(bmp, width, height, true);
-                if (pic != null) {
-                    bmp.recycle();
-                    ret = pic;
-                }
-            }
-            if (height > maxHeight) {
-                Bitmap bm = Bitmap.createBitmap(ret, ImageUtil.RESULT_SUCCESS, (height - maxHeight) / 2, width, maxHeight);
-                if (bm != null) {
-                    ret.recycle();
-                    return bm;
-                }
-            }
-            return ret;
-        }
-    }
-
     private static Bitmap decodeUriToBitmap(ContentResolver cr, Uri uri, Options options) {
         Bitmap bm = null;
         InputStream is = null;
@@ -204,7 +98,8 @@ public class ImageUtil {
         }
         return newbit;
     }
-//严重问题注释了
+
+    //严重问题注释了
     public static boolean saveBitmap2file(Bitmap bmp, String filename) {
 /*        Exception e;
         Throwable th;
@@ -470,12 +365,118 @@ public class ImageUtil {
     }
 
     public static void getImageSizeRect(String fileName, Rect rect) {
-            Options opts = new Options();
-                opts.inJustDecodeBounds = true;
-                Bitmap bm = BitmapFactory.decodeFile(fileName, opts);
-                rect.set(RESULT_SUCCESS, RESULT_SUCCESS, opts.outWidth, opts.outHeight);
-                if (bm != null) {
+        Options opts = new Options();
+        opts.inJustDecodeBounds = true;
+        Bitmap bm = BitmapFactory.decodeFile(fileName, opts);
+        rect.set(RESULT_SUCCESS, RESULT_SUCCESS, opts.outWidth, opts.outHeight);
+        if (bm != null) {
+            bm.recycle();
+        }
+    }
+
+    public static class NoteImageGetter {
+        Context mContext;
+        int mWidth;
+
+        public NoteImageGetter(Context context, int width) {
+            this.mWidth = width;
+            this.mContext = context;
+        }
+
+        public BitmapDrawable getDrawable(String source) {
+            BitmapDrawable drawable = createFromPath(source);
+            if (drawable != null) {
+                drawable.setBounds(ImageUtil.RESULT_SUCCESS, ImageUtil.RESULT_SUCCESS, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            }
+            return drawable;
+        }
+
+        public BitmapDrawable createFromPath(String pathName) {
+            Options options;
+            if (pathName == null) {
+                return null;
+            }
+            File image = new File(pathName);
+            if (!image.exists()) {
+                return null;
+            }
+            Bitmap bm = null;
+            try {
+                Options opts;
+                Options opts1 = new Options();
+                try {
+                    opts1.inJustDecodeBounds = true;
+                    BitmapFactory.decodeFile(image.toString(), opts1);
+                    opts = new Options();
+                } catch (Exception e) {
+                    options = opts1;
+                    if (bm != null) {
+                        return null;
+                    }
                     bm.recycle();
+                    return null;
                 }
+                try {
+                    opts.inSampleSize = opts1.outWidth / this.mWidth;
+                    opts.inPreferredConfig = ImageUtil.config;
+                    opts.inJustDecodeBounds = false;
+                    opts.inInputShareable = true;
+                    opts.inPurgeable = true;
+                    bm = BitmapFactory.decodeFile(image.toString(), opts);
+                    Bitmap pic = bm;
+                    if (!(bm == null || pic == bm)) {
+                        bm.recycle();
+                    }
+                    if (pic != null) {
+                        return new BitmapDrawable(this.mContext.getResources(), pic);
+                    }
+                    return null;
+                } catch (Exception e2) {
+                    options = opts1;
+                    Options options2 = opts;
+                    if (bm != null) {
+                        return null;
+                    }
+                    bm.recycle();
+                    return null;
+                }
+            } catch (Exception e3) {
+                if (bm != null) {
+                    return null;
+                }
+                bm.recycle();
+                return null;
+            }
+        }
+    }
+
+    public static class WidgetImageGetter {
+        public Bitmap getBitmap(Context context, Uri uri, int maxWidth, int maxHeight) {
+            Bitmap bmp = ImageUtil.decodeImageToBitmap(context, uri);
+            if (bmp == null) {
+                return null;
+            }
+            int originWidth = bmp.getWidth();
+            int width = originWidth;
+            int height = bmp.getHeight();
+            Bitmap ret = bmp;
+            if (width != maxWidth) {
+                width = maxWidth;
+                height = (int) Math.floor(((double) height) / ((double) ((((float) originWidth) * DefaultRetryPolicy.DEFAULT_BACKOFF_MULT) / ((float) width))));
+                Bitmap pic = Bitmap.createScaledBitmap(bmp, width, height, true);
+                if (pic != null) {
+                    bmp.recycle();
+                    ret = pic;
+                }
+            }
+            if (height > maxHeight) {
+                Bitmap bm = Bitmap.createBitmap(ret, ImageUtil.RESULT_SUCCESS, (height - maxHeight) / 2, width, maxHeight);
+                if (bm != null) {
+                    ret.recycle();
+                    return bm;
+                }
+            }
+            return ret;
+        }
     }
 }

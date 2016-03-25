@@ -27,12 +27,9 @@ public class NoteUtil {
     public static final int EDIT_TYPE_NORMAL = -1;
     public static final int EDIT_TYPE_RECORD = -3;
     public static final int EDIT_TYPE_UPDATE = -5;
-    static final String[] COLOR_ABB;
     public static final int[] COLOR_BACKGROUND = new int[]{-328966, -398646, -2100036, -3277331, -3674884, -139556, -199231};
-    static final int COLOR_NUM = 12;
     public static final int[] COLOR_TEXT_HIGH_LIGHT = new int[]{-4558, -16341, -27321, -38073, -3807667, -14757692, -12605474, -12613154, EDIT_TYPE_NORMAL, -1315861, -5000269, -7171438};
     public static final int[] COLOR_TEXT_HIGH_LIGHT_RES = new int[]{R.drawable.brush_yellow, R.drawable.brush_light_orange, R.drawable.brush_dark_orange, R.drawable.brush_red, R.drawable.brush_green, R.drawable.brush_sky_blue, R.drawable.brush_light_blue, R.drawable.brush_dark_blue, R.drawable.brush_white, R.drawable.brush_light_gray, R.drawable.brush_med_gray, R.drawable.brush_dark_gray};
-
     public static final int NOTE_TYPE_LIST = 0;
     public static final int NOTE_TYPE_TEXT = 0;
     public static final String ENCODING = "UTF-8";
@@ -45,8 +42,6 @@ public class NoteUtil {
     public static final String JSON_SPAN = "span";
     public static final String JSON_STATE = "state";
     public static final String JSON_TEXT = "text";
-    static final long MILLSECONDS_OF_DAY = 86400000;
-    static final long MILLSECONDS_OF_HOUR = 3600000;
     public static final String NOTE_SPAN_BACKGROUNDCOLOR = "bc";
     public static final String NOTE_SPAN_END = "end";
     public static final String NOTE_SPAN_FOREGROUNDCOLOR = "fc";
@@ -56,9 +51,12 @@ public class NoteUtil {
     public static final String NOTE_SPAN_START = "start";
     public static final String NOTE_SPAN_TYPE = "span";
     public static final String NOTE_SPAN_URL = "url";
-
     public static final String RECORD_DIV = "/";
     public static final String SAFE_BOX_FILE_PATH = (Environment.getExternalStorageDirectory().getPath() + "/.@meizu_protbox@");
+    static final String[] COLOR_ABB;
+    static final int COLOR_NUM = 12;
+    static final long MILLSECONDS_OF_DAY = 86400000;
+    static final long MILLSECONDS_OF_HOUR = 3600000;
     static final String TAG = "NoteUtil";
     static final char[] hexDigits = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', NotePaper.BLUE, 'c', 'd', 'e', 'f'};
 

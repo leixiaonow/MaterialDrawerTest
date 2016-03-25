@@ -19,11 +19,11 @@ public class TagEditLayout extends LinearLayout {
         super(context, attrs, defStyle);
     }
 
-    public void setChanged(boolean changed) {
-        this.mChanged = changed;
-    }
-
     public boolean getChanged() {
         return this.mChanged;
+    }
+
+    public void setChanged(boolean changed) {
+        this.mChanged = changed;
     }
 }

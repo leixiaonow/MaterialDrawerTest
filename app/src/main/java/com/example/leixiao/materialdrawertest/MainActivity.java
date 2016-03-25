@@ -16,6 +16,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.flyme.notepaper.NoteEditActivity;
+import com.example.flyme.notepaper.database.NotePaper;
+import com.example.flyme.notepaper.utils.Constants;
 import com.example.leixiao.adapter.MainRecyclerViewAdapter;
 import com.example.leixiao.data.Note;
 import com.example.leixiao.data.dao.NoteDAO;
@@ -23,9 +26,6 @@ import com.example.leixiao.data.dao.impl.sqlite.NoteSQLiteDAO;
 import com.example.leixiao.data.source.sqlite.NotesDatabaseHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.example.flyme.notepaper.NoteEditActivity;
-import com.example.flyme.notepaper.database.NotePaper;
-import com.example.flyme.notepaper.utils.Constants;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.Drawer;
 
@@ -34,19 +34,16 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     private static final int NEW_NOTE_RESULT_CODE = 4;
     private static final int EDIT_NOTE_RESULT_CODE = 5;
-    private Boolean isAddOpen=false;
-    private Boolean isGridView=false;
-    private Boolean isActionMode=false;
-
+    NoteDAO noteDAO;
+    private Boolean isAddOpen = false;
+    private Boolean isGridView = false;
+    private Boolean isActionMode = false;
     private TextView emptyListTextView;
     private Toolbar toolbar;
     private RecyclerView recyclerView;
     private FloatingActionsMenu menuMultipleActions;
     private FloatingActionButton actionButton_JiShi;
     private FloatingActionButton actionButton_ZhaoPian;
-
-    NoteDAO noteDAO;
-
     private ArrayList<Integer> selectedPositions;//被选中的位置
     private ArrayList<Note> notesData;//笔记数据
     private ActionMode.Callback actionModeCallback;//callback的声明
@@ -79,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.mipmap.ic_drawer_home);
-    //    toolbar.setLogo(R.mipmap.ic_launcher);
+        //    toolbar.setLogo(R.mipmap.ic_launcher);
         toolbar.setTitle("记事本");
         toolbar.setSubtitle("视图");
 
@@ -89,14 +86,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //不同的显示方式GridView和LinearLayout
-        isGridView=false;
-        if(isGridView) {
+        isGridView = false;
+        if (isGridView) {
             recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        }
-        else{
+        } else {
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
         }
-
 
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -108,23 +103,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
 
-                if (!isActionMode){
+                if (!isActionMode) {
                     startActivityForResult(ViewNoteActivity.buildIntent(MainActivity.this, notesData.get(position)), EDIT_NOTE_RESULT_CODE);
-                }
-                else {
-                    if (selectedPositions.contains(position)){
+                } else {
+                    if (selectedPositions.contains(position)) {
                         notesData.get(position).setSelected(false);
-                        selectedPositions.remove((Object)position);
+                        selectedPositions.remove((Object) position);
                         mAdapter.notifyDataSetChanged();
-                        if (selectedPositions.size()==0){
+                        if (selectedPositions.size() == 0) {
                             actionMode.finish();
-                            isActionMode=false;
+                            isActionMode = false;
                             return;
                         }
                         actionMode.setTitle(String.valueOf(selectedPositions.size()));
 
-                    }
-                    else {
+                    } else {
                         selectedPositions.add(position);
                         notesData.get(position).setSelected(true);
                         actionMode.setTitle(String.valueOf(selectedPositions.size()));
@@ -169,13 +162,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        actionModeCallback= new ActionMode.Callback() {
+        actionModeCallback = new ActionMode.Callback() {
 
             //开始ActionMode的时候，调用setListOnItemClickListenersWhenActionMode（）方法
             //添加ActionMode的时候的点击事件。同时加载ActionMode下的导航菜单
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            //    setListOnItemClickListenersWhenActionMode();
+                //    setListOnItemClickListenersWhenActionMode();
                 mode.getMenuInflater().inflate(R.menu.context_note, menu);
                 return true;
             }
@@ -200,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                                         public void onClick(DialogInterface dialog, int which) {
                                             deleteNotes(selectedPositions);
                                             mode.finish();
-                                            isActionMode=false;
+                                            isActionMode = false;
                                         }
                                     })
                                     .show();
@@ -216,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
             //重置SelectedListItems
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-             //   setListOnItemClickListenersWhenNoActionMode();
+                //   setListOnItemClickListenersWhenNoActionMode();
                 resetSelectedListItems();
             }
         };
@@ -225,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void resetSelectedListItems() {
         for (Note note : notesData)
-        note.setSelected(false);
+            note.setSelected(false);
         selectedPositions.clear();
         mAdapter.notifyDataSetChanged();
     }
@@ -278,14 +271,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_chang_view:
-                if(isGridView) {
-                    isGridView=false;
+                if (isGridView) {
+                    isGridView = false;
                     recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-                }
-                else{
-                    isGridView=true;
+                } else {
+                    isGridView = true;
                     recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
                 }
                 break;
@@ -311,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
     private void addNote(Intent data) {
         Note note = EditNoteActivity.getExtraNote(data);
         noteDAO.insert(note);
-        notesData.add(0,note);//插入首部
+        notesData.add(0, note);//插入首部
         updateView();
         recyclerView.scrollToPosition(0);
         mAdapter.notifyItemInserted(0);//通知首部插入数据

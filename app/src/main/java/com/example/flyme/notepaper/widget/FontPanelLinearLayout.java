@@ -20,18 +20,6 @@ public class FontPanelLinearLayout extends LinearLayout {
     private ImageView fontInc;
     private int mFontSize = MIN_FONT_SIZE;
 
-    static /* synthetic */ int access$012(FontPanelLinearLayout x0, int x1) {
-        int i = x0.mFontSize + x1;
-        x0.mFontSize = i;
-        return i;
-    }
-
-    static /* synthetic */ int access$020(FontPanelLinearLayout x0, int x1) {
-        int i = x0.mFontSize - x1;
-        x0.mFontSize = i;
-        return i;
-    }
-
     public FontPanelLinearLayout(Context context) {
         super(context);
     }
@@ -42,6 +30,18 @@ public class FontPanelLinearLayout extends LinearLayout {
 
     public FontPanelLinearLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+
+    static /* synthetic */ int access$012(FontPanelLinearLayout x0, int x1) {
+        int i = x0.mFontSize + x1;
+        x0.mFontSize = i;
+        return i;
+    }
+
+    static /* synthetic */ int access$020(FontPanelLinearLayout x0, int x1) {
+        int i = x0.mFontSize - x1;
+        x0.mFontSize = i;
+        return i;
     }
 
     protected void onFinishInflate() {

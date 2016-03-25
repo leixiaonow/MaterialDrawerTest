@@ -32,26 +32,6 @@ public class CheckImageView extends ImageView {
         setOnClickListener(listener);
     }
 
-    //设置图片显示的资源和是否隐藏根据type判断，编辑edit时
-    public void setImageType(int type) {
-        this.mType = type;
-        switch (this.mType) {
-            case 0 /*0*/:
-                setImageDrawable(null);
-                setVisibility(GONE);
-                return;
-            case 1 /*1*/:
-                setImageResource(R.drawable.ic_tab_check_off);
-                setVisibility(VISIBLE);
-                return;
-            case 2 /*2*/:
-                setImageResource(R.drawable.ic_tab_check_on);
-                setVisibility(VISIBLE);
-                return;
-            default:
-                return;
-        }
-    }
     //设置图片显示的资源和是否隐藏根据type判断，浮动时
     public void setSmallImageType(int type) {
         this.mType = type;
@@ -97,5 +77,26 @@ public class CheckImageView extends ImageView {
     //返回显示类型type
     public int getImageType() {
         return this.mType;
+    }
+
+    //设置图片显示的资源和是否隐藏根据type判断，编辑edit时
+    public void setImageType(int type) {
+        this.mType = type;
+        switch (this.mType) {
+            case 0 /*0*/:
+                setImageDrawable(null);
+                setVisibility(GONE);
+                return;
+            case 1 /*1*/:
+                setImageResource(R.drawable.ic_tab_check_off);
+                setVisibility(VISIBLE);
+                return;
+            case 2 /*2*/:
+                setImageResource(R.drawable.ic_tab_check_on);
+                setVisibility(VISIBLE);
+                return;
+            default:
+                return;
+        }
     }
 }

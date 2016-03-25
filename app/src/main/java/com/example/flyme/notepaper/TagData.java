@@ -2,18 +2,18 @@ package com.example.flyme.notepaper;
 
 import android.database.Cursor;
 
-import com.example.flyme.notepaper.utils.NoteUtil;
 import com.example.flyme.notepaper.database.NotePaper.NoteCategory;
 import com.example.flyme.notepaper.database.NotePaper.NoteFiles;
 import com.example.flyme.notepaper.database.NotePaper.Notes;
+import com.example.flyme.notepaper.utils.NoteUtil;
 
 public class TagData {
-    public static boolean FUN_ENCRYPT = true;
     public static final long GROUP_ALL_ID = -1;
     public static final long GROUP_ENCRYPT_ID = -2;
     public static final String[] TAGS_LIST = new String[]{NoteFiles.DEFAULT_SORT_ORDER, NoteUtil.JSON_FILE_NAME};
     public static final String[] TAGS_PROJECTION = new String[]{NoteFiles.DEFAULT_SORT_ORDER, Notes.UUID, NoteUtil.JSON_FILE_NAME, NoteCategory.CATEGORY_ORDER};
     public static final int TAG_COUNT = 8;
+    public static boolean FUN_ENCRYPT = true;
     public int mCount;
     public long mId = GROUP_ALL_ID;
     public String mName;
@@ -30,7 +30,8 @@ public class TagData {
         this.mOrder = td.mOrder;
         this.mCount = td.mCount;
     }
-//我加的，因为getTag方法需要一个无参数的构造方法
+
+    //我加的，因为getTag方法需要一个无参数的构造方法
     public TagData() {
         super();
     }

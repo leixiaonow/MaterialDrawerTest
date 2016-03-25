@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- *Note的数据模型
+ * Note的数据模型
  */
 public class Note implements Serializable {
 
@@ -15,7 +15,7 @@ public class Note implements Serializable {
     private String content;
     private Date createdAt;
     private Date updatedAt;
-    private Boolean selected=false;
+    private Boolean selected = false;
 
     public Boolean getSelected() {
         return selected;

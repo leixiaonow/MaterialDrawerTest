@@ -23,33 +23,6 @@ public class BlurDrawable extends Drawable {
     @ExportedProperty(deepExport = true, prefix = "state_")
     private BlurState mState;
 
-    static final class BlurState extends ConstantState {
-        @ExportedProperty
-        int mChangingConfigurations;
-        float mLevel = BlurDrawable.DEFAULT_BLUR_LEVEL;
-        Paint mPaint = new Paint();
-
-        BlurState(BlurState state) {
-            if (state != null) {
-                this.mLevel = state.mLevel;
-                this.mPaint = new Paint(state.mPaint);
-                this.mChangingConfigurations = state.mChangingConfigurations;
-            }
-        }
-
-        public Drawable newDrawable() {
-            return new BlurDrawable();
-        }
-
-        public Drawable newDrawable(Resources res) {
-            return new BlurDrawable();
-        }
-
-        public int getChangingConfigurations() {
-            return this.mChangingConfigurations;
-        }
-    }
-
     public BlurDrawable() {
         this(null);
     }
@@ -63,6 +36,14 @@ public class BlurDrawable extends Drawable {
         this.mState = new BlurState(state);
         if (state == null) {
             setColorFilter(new PorterDuffColorFilter(DEFAULT_BLUR_COLOR, DEFAULT_BLUR_COLOR_MODE));
+        }
+    }
+
+    private static Method getDrawBlurRectMethod() {
+        try {
+            return Canvas.class.getMethod("drawBlurRect", new Class[]{Rect.class, Float.TYPE, Paint.class});
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -132,11 +113,30 @@ public class BlurDrawable extends Drawable {
         return this.mState;
     }
 
-    private static Method getDrawBlurRectMethod() {
-        try {
-            return Canvas.class.getMethod("drawBlurRect", new Class[]{Rect.class, Float.TYPE, Paint.class});
-        } catch (Exception e) {
-            return null;
+    static final class BlurState extends ConstantState {
+        @ExportedProperty
+        int mChangingConfigurations;
+        float mLevel = BlurDrawable.DEFAULT_BLUR_LEVEL;
+        Paint mPaint = new Paint();
+
+        BlurState(BlurState state) {
+            if (state != null) {
+                this.mLevel = state.mLevel;
+                this.mPaint = new Paint(state.mPaint);
+                this.mChangingConfigurations = state.mChangingConfigurations;
+            }
+        }
+
+        public Drawable newDrawable() {
+            return new BlurDrawable();
+        }
+
+        public Drawable newDrawable(Resources res) {
+            return new BlurDrawable();
+        }
+
+        public int getChangingConfigurations() {
+            return this.mChangingConfigurations;
         }
     }
 }

@@ -20,10 +20,6 @@ import com.example.flyme.notepaper.utils.ReflectUtils;
 import com.example.leixiao.materialdrawertest.R;
 
 public class NoteEditText extends EditTextCloud {
-    private float mLastDownPositionX;
-    private float mLastDownPositionY;
-    private ClickableSpan[] mLinks;
-    private CheckForLongPress mPendingCheckForLongPress = null;
     TextWatcher mTextWatch = new TextWatcher() {
         public void afterTextChanged(Editable editable) {
             ((NoteEditActivity) NoteEditText.this.getContext()).setTextChanged();
@@ -36,43 +32,11 @@ public class NoteEditText extends EditTextCloud {
             ((NoteEditActivity) NoteEditText.this.getContext()).setCount(((NoteEditActivity) NoteEditText.this.getContext()).getCount() + (count - before));
         }
     };
+    private float mLastDownPositionX;
+    private float mLastDownPositionY;
+    private ClickableSpan[] mLinks;
+    private CheckForLongPress mPendingCheckForLongPress = null;
     private int mTouchSlopSquare;
-
-    class CheckForLongPress implements Runnable {
-        CheckForLongPress() {
-        }
-
-        public void run() {
-            if (NoteEditText.this.mLinks != null && NoteEditText.this.mLinks.length > 0) {
-                NoteEditText.this.mLinks = null;
-            }
-        }
-    }
-
-    class CustomFilter implements InputFilter {
-        CustomFilter() {
-        }
-
-        public CharSequence filter(CharSequence charSequence, int i, int i2, Spanned spanned, int i3, int i4) {
-            int keep = (20000 - ((NoteEditActivity) NoteEditText.this.getContext()).getCount()) + (i4 - i3);
-            if (keep <= 0) {
-                Toast.makeText(NoteEditText.this.getContext(), R.string.words_limit, Toast.LENGTH_SHORT).show();
-                return BuildConfig.VERSION_NAME;
-            } else if (keep >= i2 - i) {
-                return null;
-            } else {
-                keep += i;
-                Toast.makeText(NoteEditText.this.getContext(), R.string.words_limit, Toast.LENGTH_SHORT).show();
-                if (Character.isHighSurrogate(charSequence.charAt(keep - 1))) {
-                    keep--;
-                    if (keep == i) {
-                        return BuildConfig.VERSION_NAME;
-                    }
-                }
-                return charSequence.subSequence(i, keep);
-            }
-        }
-    }
 
     public NoteEditText(Context context) {
         super(context);
@@ -177,5 +141,41 @@ public class NoteEditText extends EditTextCloud {
         ((NoteEditActivity) getContext()).setCount(((NoteEditActivity) getContext()).getCount() - length());
         removeTextChangedListener(this.mTextWatch);
         super.onDetachedFromWindow();
+    }
+
+    class CheckForLongPress implements Runnable {
+        CheckForLongPress() {
+        }
+
+        public void run() {
+            if (NoteEditText.this.mLinks != null && NoteEditText.this.mLinks.length > 0) {
+                NoteEditText.this.mLinks = null;
+            }
+        }
+    }
+
+    class CustomFilter implements InputFilter {
+        CustomFilter() {
+        }
+
+        public CharSequence filter(CharSequence charSequence, int i, int i2, Spanned spanned, int i3, int i4) {
+            int keep = (20000 - ((NoteEditActivity) NoteEditText.this.getContext()).getCount()) + (i4 - i3);
+            if (keep <= 0) {
+                Toast.makeText(NoteEditText.this.getContext(), R.string.words_limit, Toast.LENGTH_SHORT).show();
+                return BuildConfig.VERSION_NAME;
+            } else if (keep >= i2 - i) {
+                return null;
+            } else {
+                keep += i;
+                Toast.makeText(NoteEditText.this.getContext(), R.string.words_limit, Toast.LENGTH_SHORT).show();
+                if (Character.isHighSurrogate(charSequence.charAt(keep - 1))) {
+                    keep--;
+                    if (keep == i) {
+                        return BuildConfig.VERSION_NAME;
+                    }
+                }
+                return charSequence.subSequence(i, keep);
+            }
+        }
     }
 }

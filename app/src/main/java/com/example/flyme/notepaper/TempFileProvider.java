@@ -18,13 +18,34 @@ import java.io.FileNotFoundException;
 //原来是个假货，假的provider
 public class TempFileProvider extends ContentProvider {
     public static final String AUTHORITY = (Config.PACKAGE_NAME + ".TempFile");
-    private static final int MMS_SCRAP_SPACE = 1;
     public static final Uri SCRAP_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/scrapSpace");
-    private static String TAG = "TempFileProvider";
+    private static final int MMS_SCRAP_SPACE = 1;
     private static final UriMatcher sURLMatcher = new UriMatcher(-1);
+    private static String TAG = "TempFileProvider";
 
     static {
         sURLMatcher.addURI(AUTHORITY, "scrapSpace", MMS_SCRAP_SPACE);
+    }
+
+    public static File getScrapPath(Context context, String fileName) {
+        return new File(context.getExternalCacheDir(), fileName);
+    }
+
+    public static File getScrapPath(Context context) {
+        return getScrapPath(context, ".temp.jpg");
+    }
+
+    public static Uri renameScrapFile(String fileExtension, String uniqueIdentifier, Context context) {
+        if (uniqueIdentifier == null) {
+            uniqueIdentifier = BuildConfig.VERSION_NAME;
+        }
+        File newTempFile = getScrapPath(context, ".temp" + uniqueIdentifier + fileExtension);
+        File oldTempFile = getScrapPath(context);
+        newTempFile.delete();
+        if (oldTempFile.renameTo(newTempFile)) {
+            return Uri.fromFile(newTempFile);
+        }
+        return null;
     }
 
     public boolean onCreate() {
@@ -80,26 +101,5 @@ public class TempFileProvider extends ContentProvider {
             default:
                 return null;
         }
-    }
-
-    public static File getScrapPath(Context context, String fileName) {
-        return new File(context.getExternalCacheDir(), fileName);
-    }
-
-    public static File getScrapPath(Context context) {
-        return getScrapPath(context, ".temp.jpg");
-    }
-
-    public static Uri renameScrapFile(String fileExtension, String uniqueIdentifier, Context context) {
-        if (uniqueIdentifier == null) {
-            uniqueIdentifier = BuildConfig.VERSION_NAME;
-        }
-        File newTempFile = getScrapPath(context, ".temp" + uniqueIdentifier + fileExtension);
-        File oldTempFile = getScrapPath(context);
-        newTempFile.delete();
-        if (oldTempFile.renameTo(newTempFile)) {
-            return Uri.fromFile(newTempFile);
-        }
-        return null;
     }
 }

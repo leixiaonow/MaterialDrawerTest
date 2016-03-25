@@ -15,10 +15,10 @@ public class DragShadowBuilderMz extends DragShadowBuilder {
     public static final int STATE_ENTER_NORMAL = 0;
     public static final int STATE_ENTER_WARNING = 1;
     public static final int STATE_IDLE = -1;
-    private Drawable mBackground;
-    private Rect mBackgroundPadding;
     int mDragOffsetX;
     int mDragOffsetY;
+    private Drawable mBackground;
+    private Rect mBackgroundPadding;
     private int mDragViewBackground;
     private int mDragViewBackgroundDelete;
     private int mDragViewBackgroundFilter;

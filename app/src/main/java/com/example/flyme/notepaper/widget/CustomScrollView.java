@@ -25,9 +25,9 @@ import com.example.leixiao.materialdrawertest.R;
 
 public class CustomScrollView extends ScrollView {
     final int BOUND = 80;
-    boolean DEBUG = false;
     final int OFFSET = 20;
     final String TAG = "CustomScrollView";
+    boolean DEBUG = false;
     boolean first = true;
     View mDragLine;
     int mDragPosition;
@@ -38,6 +38,8 @@ public class CustomScrollView extends ScrollView {
     boolean mFocusFlag;
     int mLowerBound;
     int mOffset;
+    int mTopOffset;
+    int mUpperBound;
     private boolean mRestoreSwitch = true;
     private Runnable mScrollRunnable = new Runnable() {
         public void run() {
@@ -62,8 +64,6 @@ public class CustomScrollView extends ScrollView {
             CustomScrollView.this.removeCallbacks(CustomScrollView.this.mScrollRunnable);
         }
     };
-    int mTopOffset;
-    int mUpperBound;
 
     public CustomScrollView(Context context) {
         super(context);

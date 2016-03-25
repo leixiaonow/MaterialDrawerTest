@@ -14,6 +14,10 @@ public class RecordActivityBase extends AppCompatActivity implements RecordPlayM
     public static final int NORMAL = 0;
     public static final int PLAYING = 1;
     public static final int PLAYPAUSE = 2;
+    public int mPlayingState;
+    private AudioManager mAudioManager;
+    private boolean mPausedByTransientLossOfFocus = false;
+    private RecordLinearLayout mRecordView;
     private OnAudioFocusChangeListener mAudioFocusListener = new OnAudioFocusChangeListener() {
         public void onAudioFocusChange(int focusChange) {
             switch (focusChange) {
@@ -47,10 +51,6 @@ public class RecordActivityBase extends AppCompatActivity implements RecordPlayM
             }
         }
     };
-    private AudioManager mAudioManager;
-    private boolean mPausedByTransientLossOfFocus = false;
-    public int mPlayingState;
-    private RecordLinearLayout mRecordView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

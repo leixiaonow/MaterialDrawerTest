@@ -4,9 +4,9 @@ import android.database.Cursor;
 import android.support.v4.view.ViewCompat;
 import android.util.Log;
 
-import com.example.flyme.notepaper.utils.NoteUtil;
 import com.example.flyme.notepaper.database.NotePaper.NoteFiles;
 import com.example.flyme.notepaper.database.NotePaper.Notes;
+import com.example.flyme.notepaper.utils.NoteUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,8 +15,8 @@ import org.json.JSONObject;
 import java.io.Serializable;
 
 public class NoteData implements Serializable {
-    public static int DEFAULT_FONT_SIZE = 18;
     public static final String[] NOTES_PROJECTION = new String[]{NoteFiles.DEFAULT_SORT_ORDER, Notes.TITLE, Notes.CREATE_TIME, Notes.MODIFIED_DATE, Notes.NOTE, Notes.PAPER, Notes.UUID, Notes.FONT_COLOR, Notes.FONT_SIZE, Notes.FIRST_IMAGE, Notes.FIRST_RECORD, Notes.ENCRYPT, Notes.TAG, Notes.TOP, Notes.DESKTOP};
+    public static int DEFAULT_FONT_SIZE = 18;
     public long mCreateTime;
     public int mDesktop;
     public boolean mEncrypt;

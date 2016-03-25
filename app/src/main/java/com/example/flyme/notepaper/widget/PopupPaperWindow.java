@@ -15,12 +15,6 @@ public class PopupPaperWindow extends PopupWindow {
     Context mContext;
     OnPopupStateChangeListener mPopupStateChangeListener;
 
-    public interface OnPopupStateChangeListener {
-        void onPopDown();
-
-        void onPopup();
-    }
-
     public PopupPaperWindow(Context context) {
         super(context);
         this.mContext = context;
@@ -75,5 +69,11 @@ public class PopupPaperWindow extends PopupWindow {
             return;
         }
         super.dismiss();
+    }
+
+    public interface OnPopupStateChangeListener {
+        void onPopDown();
+
+        void onPopup();
     }
 }

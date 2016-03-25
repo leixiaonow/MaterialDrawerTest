@@ -13,6 +13,7 @@ import com.example.flyme.notepaper.utils.ReflectUtils;
 import com.example.leixiao.materialdrawertest.R;
 
 public class HorizontalBackgoundView extends HorizontalScrollView {
+    ColorView mCurrentBackView;
     OnClickListener mBackgroundImgClickListener = new OnClickListener() {
         public void onClick(View v) {
             ColorView iv = (ColorView) v;
@@ -28,7 +29,6 @@ public class HorizontalBackgoundView extends HorizontalScrollView {
             }
         }
     };
-    ColorView mCurrentBackView;
     int mItemWidth;
 
     public HorizontalBackgoundView(Context context) {

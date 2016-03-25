@@ -6,11 +6,12 @@ import com.example.leixiao.data.Note;
 import java.util.List;
 
 /**
- *数据访问接口
+ * 数据访问接口
  */
 public interface NoteDAO {
     /**
      * 获取全部Note
+     *
      * @return
      */
 
