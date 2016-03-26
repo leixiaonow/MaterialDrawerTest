@@ -8,55 +8,56 @@
     <com.example.leixiao.notepaper.widget.RecordLinearLayout
         android:id="@id/recordLayout"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/edit_record_height"
-        android:layout_marginBottom="@dimen/edit_record_bottom_margin"
-        android:layout_marginLeft="@dimen/edit_record_horizontal_margin"
-        android:layout_weight="1.0"
+        android:layout_height="@dimen/edit_recording_height"
+        android:layout_marginBottom="@dimen/edit_recording_bottom_margin"
+        android:layout_marginLeft="@dimen/edit_recording_horizontal_margin"
+        android:layout_marginRight="@dimen/edit_recording_horizontal_margin"
         android:background="@drawable/background_edit_record"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <SeekBar
             android:id="@id/player_seekbar"
-            android:layout_width="wrap_content"
+            android:layout_width="0.0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/edit_record_seekbar_left_margin"
+            android:layout_weight="0.6"
+            android:layout_marginLeft="5dp"
             android:maxHeight="@dimen/edit_record_height"
             android:maxWidth="200.0dip"
-            android:paddingLeft="0.0dip"
-            android:paddingRight="0.0dip"
-            android:progressDrawable="@drawable/record_progress"
-            android:thumb="@null"
-            android:thumbOffset="0.0dip" />
+            android:layout_gravity="center_vertical"
+            android:thumb="@null" />
 
         <LinearLayout
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
-            android:layout_weight="1.0"
+            android:layout_weight="0.2"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@id/player_passtime"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0.0dp"
+                android:layout_weight="0.5"
                 android:textColor="#ffea5246"
-                android:textSize="14.0sp"
+                android:textSize="16.0sp"
                 android:visibility="gone" />
 
             <TextView
                 android:id="@id/player_totaltime"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0.0dp"
+                android:layout_weight="0.5"
                 android:textColor="#80000000"
-                android:textSize="14.0sp" />
+                android:textSize="16.0sp" />
         </LinearLayout>
 
         <ImageButton
             android:id="@id/delete"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_marginRight="@dimen/edit_record_delete_right_margin"
+            android:layout_width="0.0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:layout_marginRight="5dp"
             android:background="@null"
             android:gravity="center"
             android:scaleType="centerInside"
@@ -64,11 +65,12 @@
 
         <ImageButton
             android:id="@id/player_control"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_marginRight="@dimen/edit_record_play_right_margin"
+            android:layout_width="0.0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:layout_marginRight="5dp"
             android:background="@null"
-            android:gravity="center"
+            android:layout_gravity="center"
             android:scaleType="centerInside"
             android:src="@drawable/btn_record_play" />
     </com.example.leixiao.notepaper.widget.RecordLinearLayout>
@@ -80,5 +82,6 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="0.0dip"
         android:background="@null"
-        android:cursorVisible="false" />
+        android:cursorVisible="false"
+        android:visibility="gone" />
 </com.example.leixiao.notepaper.widget.RichFrameLayout>

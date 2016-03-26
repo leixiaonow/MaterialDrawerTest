@@ -16,34 +16,40 @@
 
         <ImageView
             android:id="@id/anim"
-            android:layout_width="wrap_content"
+            android:layout_width="0.0dip"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/edit_recording_anim_left_margin"
-            android:src="@drawable/recording_scaledrawable" />
+            android:layout_weight="0.6"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/recording_scaledrawable"
+            android:layout_gravity="left" />
 
         <TextView
             android:id="@id/time"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
-            android:layout_weight="1.0"
+            android:layout_weight="0.2"
             android:gravity="center"
             android:textColor="#ff000000"
             android:textSize="16.0sp" />
 
         <ImageView
             android:id="@id/pause"
-            android:layout_width="wrap_content"
+            android:layout_width="0.0dip"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/edit_recording_pause_right_margin"
-            android:scaleType="matrix"
+            android:layout_weight="0.1"
+            android:layout_marginRight="5dp"
+            android:gravity="center"
+            android:scaleType="centerInside"
             android:src="@drawable/mz_ic_pause" />
 
         <ImageView
             android:id="@id/stop"
-            android:layout_width="wrap_content"
+            android:layout_width="0.0dip"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/edit_recording_stop_right_margin"
-            android:scaleType="matrix"
+            android:layout_weight="0.1"
+            android:layout_marginRight="5dp"
+            android:gravity="center"
+            android:scaleType="centerInside"
             android:src="@drawable/mz_ic_stop" />
     </LinearLayout>
 </com.example.leixiao.notepaper.widget.RecordingLayout>
