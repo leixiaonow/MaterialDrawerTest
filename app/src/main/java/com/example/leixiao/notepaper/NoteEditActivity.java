@@ -1873,7 +1873,7 @@ public class NoteEditActivity extends RecordActivityBase {
         DeleteImageView newdeleteView;
         NoteEditText newText;
         if (this.mFocusNoteEditText == null) {
-            int position = REQUEST_CODE_PICK;
+            int position = 0;
             if (this.mTitleView.hasFocus()) {
                 View first = this.mEditParent.getChildAt(REQUEST_CODE_PICK);
                 if (first != null && NoteUtil.JSON_TEXT.equals(first.getTag())) {
@@ -1883,7 +1883,7 @@ public class NoteEditActivity extends RecordActivityBase {
                         newdeleteView = (DeleteImageView) first.findViewById(R.id.delete);
                         ((EditDragView) first.findViewById(R.id.drag)).setImageType(REQUEST_CODE_EXPORT_TO_PIC);
                         check.setImageType(REQUEST_CODE_EXPORT_TO_PIC);
-                        newdeleteView.setVisibility(CHANGE_ENCRYPT);
+                        newdeleteView.setVisibility(View.GONE);
                         neText.requestFocus();
                         Selection.setSelection(neText.getText(), REQUEST_CODE_PICK);
                         showSoftInput(neText);

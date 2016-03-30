@@ -100,7 +100,7 @@ public class EditDragView extends ImageView {
         switch (type) {
             case 0 /*0*/:
                 setImageDrawable(null);
-                setVisibility(VISIBLE);
+                setVisibility(GONE);
                 return;
             case 1 /*1*/:
                 setImageResource(R.drawable.ic_sequence);

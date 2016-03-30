@@ -3,11 +3,11 @@
     android:id="@id/editParent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/edit_text_left_margin"
-    android:paddingRight="@dimen/edit_text_left_margin"
+    android:paddingLeft="@dimen/edit_text_margin"
+    android:paddingRight="@dimen/edit_text_margin"
     android:orientation="horizontal"
     android:tag="text"
-    android:gravity="top|left">
+    android:gravity="top">
 
     <com.example.leixiao.notepaper.widget.EditDragView
         android:id="@id/drag"
@@ -30,10 +30,10 @@
 
     <com.example.leixiao.notepaper.widget.NoteEditText
         android:id="@+id/text"
+
         android:layout_width="0.0dip"
         android:layout_height="wrap_content"
         android:layout_weight="1.0"
-        android:paddingLeft="2dp"
         android:autoLink="all"
         android:autoText="true"
         android:background="@null"
