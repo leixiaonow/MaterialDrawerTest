@@ -2000,6 +2000,8 @@ public class NoteEditActivity extends RecordActivityBase {
     }
 
 
+
+
     //这个方法有问题很多问题，保存？？
 /*    void saveImpl() {
         int index;
