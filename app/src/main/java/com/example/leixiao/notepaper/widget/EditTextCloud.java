@@ -23,6 +23,7 @@ public class EditTextCloud extends EditText {
 
     @Override
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+        //如果没有笔记内容，直接关闭页面，否则调用父类，只关闭键盘
         if (this.mOnKeyPreImeListener == null || !this.mOnKeyPreImeListener.onKeyPreIme(this, keyCode, event)) {
             return super.onKeyPreIme(keyCode, event);
         }

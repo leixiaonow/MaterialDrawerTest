@@ -400,15 +400,16 @@ public class NoteEditActivity extends RecordActivityBase {
     };
     //新标签？？
     private boolean mNewFlag = false;
-    //什么监听？？
+    //什么监听？？根据实验，如果记事本既没有标题，又没有内容，或只有一个文字元素，且为空时
+    //按返回键后，直接退出编辑界面，返回笔记列表界面，且不保存，或将已有笔记删除
     private EditTextCloud.OnKeyPreImeListener mOnKeyPreImeListener = new EditTextCloud.OnKeyPreImeListener() {
         public boolean onKeyPreIme(View view, int keyCode, KeyEvent event) {
-            if (keyCode == NoteEditActivity.REQUEST_CODE_LOGIN && event.getAction() == NoteEditActivity.REQUEST_CODE_EXPORT_TO_PIC && TextUtils.isEmpty(NoteEditActivity.this.mTitleView.getText())) {
-                if (NoteEditActivity.this.mEditParent.getChildCount() > NoteEditActivity.REQUEST_CODE_EXPORT_TO_PIC) {
+            if (keyCode == 4 && event.getAction() == 1 && TextUtils.isEmpty(NoteEditActivity.this.mTitleView.getText())) {
+                if (NoteEditActivity.this.mEditParent.getChildCount() > 1) {
                     return false;
                 }
-                View child = NoteEditActivity.this.mEditParent.getChildAt(NoteEditActivity.REQUEST_CODE_PICK);
-                if (NoteUtil.JSON_TEXT.equals((String) child.getTag()) && TextUtils.isEmpty(((NoteEditText) child.findViewById(R.id.text)).getText())) {
+                View child = NoteEditActivity.this.mEditParent.getChildAt(0);
+                if (NoteUtil.JSON_TEXT.equals(child.getTag()) && TextUtils.isEmpty(((NoteEditText) child.findViewById(R.id.text)).getText())) {
                     NoteEditActivity.this.onBackPressed();
                     return true;
                 }
@@ -1989,9 +1990,9 @@ public class NoteEditActivity extends RecordActivityBase {
         }
     }
 
-    //按返回键
+    //按返回键，结束录音
     public void onBackPressed() {
-        this.mPauseState = REQUEST_CODE_EXPORT_TO_PIC;
+        this.mPauseState = 1;
         if (this.mRecordingLayoutView != null) {
             this.mRecordingLayoutView.stopRecording(false);
             this.mRecordingLayoutView = null;
